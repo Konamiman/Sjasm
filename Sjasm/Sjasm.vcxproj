@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A56B0A96-3DC8-4BC7-9CF1-61DFF6365E66}</ProjectGuid>
+    <ProjectGuid>{F62DEB82-EA5F-4995-85F3-69FFBE6AC80E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Sjasm</RootNamespace>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
@@ -81,9 +81,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="direct.h" />
     <ClInclude Include="loose.h" />
     <ClInclude Include="parser.h" />
@@ -103,6 +100,9 @@
     <ClCompile Include="Sjasm.cpp" />
     <ClCompile Include="sjio.cpp" />
     <ClCompile Include="tables.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="sjasm.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
