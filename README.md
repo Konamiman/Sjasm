@@ -6,6 +6,6 @@ This repository has been created from the original sources as a means to have th
 
 Two branches are available for the two versions of the program, they have been created from versions 0.39g6 and 0.42c. Switch to one of these branches to actually see code.
 
-The documentation for v0.39 is in [a text file together with the source](https://bitbucket.org/konamiman/sjasm/src/v0.39/README.txt). Documentation for v0.42 [is available online](http://home.online.nl/~smastijn/sjasmmanual.html).
+The documentation for v0.39 is in [a text file together with the source](https://bitbucket.org/konamiman/sjasm/src/v0.39/README.txt). The manual for v0.42 is available as [a set of HTML files in the repository](https://bitbucket.org/konamiman/sjasm/src/v0.42/Manual), but you probably prefer to [see it properly rendered](http://konamiman.bitbucket.org/sjasm-manual).
 
 Enjoy!
