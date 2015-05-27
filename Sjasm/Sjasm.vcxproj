@@ -11,16 +11,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F62DEB82-EA5F-4995-85F3-69FFBE6AC80E}</ProjectGuid>
+    <ProjectGuid>{A56B0A96-3DC8-4BC7-9CF1-61DFF6365E66}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Sjasm</RootNamespace>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -43,6 +44,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -51,9 +53,10 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -63,12 +66,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -81,43 +84,25 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="datadir.h" />
-    <ClInclude Include="datastructures.h" />
-    <ClInclude Include="directives.h" />
-    <ClInclude Include="errors.h" />
-    <ClInclude Include="expressions.h" />
-    <ClInclude Include="fileio.h" />
-    <ClInclude Include="output.h" />
-    <ClInclude Include="pimsx.h" />
-    <ClInclude Include="preprocessor.h" />
-    <ClInclude Include="rawsource.h" />
+    <ClInclude Include="direct.h" />
+    <ClInclude Include="loose.h" />
+    <ClInclude Include="parser.h" />
+    <ClInclude Include="piz80.h" />
     <ClInclude Include="reader.h" />
     <ClInclude Include="sjasm.h" />
-    <ClInclude Include="source.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="sjio.h" />
+    <ClInclude Include="tables.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="datadir.cpp" />
-    <ClCompile Include="datastructures.cpp" />
-    <ClCompile Include="directives.cpp" />
-    <ClCompile Include="errors.cpp" />
-    <ClCompile Include="expressions.cpp" />
-    <ClCompile Include="fileio.cpp" />
-    <ClCompile Include="output.cpp" />
-    <ClCompile Include="pimsx.cpp" />
-    <ClCompile Include="preprocessor.cpp" />
-    <ClCompile Include="rawsource.cpp" />
+    <ClCompile Include="direct.cpp" />
+    <ClCompile Include="loose.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="piz80.cpp" />
     <ClCompile Include="reader.cpp" />
     <ClCompile Include="Sjasm.cpp" />
-    <ClCompile Include="source.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Makefile" />
+    <ClCompile Include="sjio.cpp" />
+    <ClCompile Include="tables.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

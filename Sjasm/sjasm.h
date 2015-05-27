@@ -1,8 +1,8 @@
 /*
 
-  Sjasm Z80 Assembler version 0.42
+  SjASM Z80 Assembler
 
-  Copyright 2011 Sjoerd Mastijn
+  Copyright (c) 2006 Sjoerd Mastijn
 
   This software is provided 'as-is', without any express or implied warranty.
   In no event will the authors be held liable for any damages arising from the
@@ -26,109 +26,80 @@
 
 // sjasm.h
 
-#define VERSION "004230"
 //#define METARM
+//#define SECTIONS
+
+#ifndef SjINCLUDE
+#define SjINCLUDE
 
 #ifdef WIN32
-#define SLASH '\\'
-#define BADSLASH '/'
-#define NEWLINE "\r\n"
-
-//#include <windows.h>
-
-//#pragma warning(disable: 4267)
-//#pragma warning(disable: 4018)
-//#pragma warning(disable: 4800)
-
-//#pragma warning(disable: 4311)
-//#pragma warning(disable: 4244)
-//#pragma warning(disable: 4786)
-
-#pragma warning(disable: 4996) // this function or variable may be unsafe
-#pragma warning(disable: 4706) // assignment within conditional expression
-#pragma warning(disable: 4127) // conditional expression is constant
-#pragma warning(disable: 4389) // signed/unsigned mismatch
-//#pragma warning(disable: 4100) // unreferenced formal parameter
-#pragma warning(disable: 4510) // default constructor could not be generated
-#pragma warning(disable: 4610) // struct can never be instantiated - user defined constructor
-#pragma warning(disable: 4512) // assignment operator could not be generated
-#pragma warning(disable: 4244) // conversion from 'bla' to 'blabla', possible loss of data
-
+#include <windows.h>
 #else
-#define SLASH '/'
-#define BADSLASH '\\'
-#define NEWLINE "\n"
+#include "loose.h"
 #endif
-
-#include <time.h>
-#include <list>
-#include <stack>
-#include <vector>
-#include <sstream>
 #include <iostream>
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::flush;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
-using namespace std;
+#define LINEMAX 300
+#define LABMAX 70
+#define LABTABSIZE 32771
+#define FUNTABSIZE 4497
+#define aint long
 
-const int BIGVALUE=2147483647; // :p
+extern char filename[],*lp,line[],temp[],*tp,pline[],eline[],*bp;
+extern int pass,labelnotfound,nerror,include,running,labellisting,listfile,donotlist,listdata,listmacro;
+extern int macronummer,lijst,reglenwidth,synerr,symfile;
+extern aint adres,mapadr,gcurlin,lcurlin,curlin,destlen,size,preverror,maxlin,comlin;
+extern FILE *input;
+extern void (*piCPUp)(void);
+extern char destfilename[],listfilename[],sourcefilename[],expfilename[],symfilename[];
+extern char *modlabp,*vorlabp,*macrolabp;
 
-struct Options {
-  Options() : listloops(false), listmacros(true), onlybp(false), useldradr(true), usemovlsl(true), allpages(false),
-    optimizejumps(false) {}
-  bool listloops;
-  bool listmacros;
-  bool listbincludes;
-  bool onlybp;             // only [] for indirections, no ()               MSX
-  bool useldradr;          // use ldr when add/sub does not work with adr   ARM
-  bool usemovlsl;          // use mov\lsl if possible with ldr              ARM
-  bool allpages;           // must all pages exist?
-  bool optimizejumps;      // convert jumps (jp/jr/djnz)                    MSX
-};
+extern FILE *listfp;
 
-class Rout;
-
-#include "datastructures.h"
-
-extern Options options,defaultoptions;
-
-extern string starttime,startdate,sourcefilename,destfilename,listfilename,expfilename,symfilename;
-extern int listcurlin,adres,page,pass,labsnok,mapadr,synerr,again,labelnotfound,macronummer,unieknummer,curlin;
-extern int lpass,errors,adrerrors,symfile,dolistfile,labellisting,partlisting,lablin;
-extern string maclabp,vorlabp,modlabp,version;
-extern char tobuffer[64];
-
-extern DefineTable deftab;
-extern DefineArgTable defargtab;
-extern MacNumTable macnumtab;
-extern LabelTable labtab;
-extern MacroTable mactab;
-extern StructTable structtab;
-extern NumLabelTable numlabtab;
-
-#include "fileio.h"
-#include "reader.h"
-#include "datadir.h"
-#include "preprocessor.h"
-#include "source.h"
-#include "output.h"
-#include "rawsource.h"
-#include "expressions.h"
-#include "directives.h"
-#include "errors.h"
-#include "pimsx.h"
+#ifdef SECTIONS
+enum sections { TEXT, DATA, POOL };
+extern sections section;
+#endif
 #ifdef METARM
-#include "pithumb.h"
-#include "piarm.h"
+enum cpus { ARM, THUMB, Z80 };
+extern cpus cpu;
+#endif
+enum structmembs { SMEMBUNKNOWN,SMEMBALIGN,SMEMBBYTE,SMEMBWORD,SMEMBBLOCK, SMEMBDWORD, SMEMBD24, SMEMBPARENOPEN, SMEMBPARENCLOSE };
+extern char *huidigzoekpad;
+
+#include "reader.h"
+#include "tables.h"
+extern stringlst *lijstp;
+#include "sjio.h"
+
+extern labtabcls labtab;
+extern loklabtabcls loklabtab;
+extern definetabcls definetab;
+extern macdefinetabcls macdeftab;
+extern macrotabcls macrotab;
+extern structtabcls structtab;
+extern adrlst *maplstp;
+extern stringlst *modlstp,*dirlstp;
+#ifdef SECTIONS
+extern pooldatacls pooldata;
+extern pooltabcls pooltab;
 #endif
 
-extern ErrorTable errtab;
-extern stack<int> mapadrstack;
-extern stack<string> modulestack;
-extern IntList pages;
-extern vector<string> cmdparameter;
+#include "parser.h"
+#include "piz80.h"
+#ifdef METARM
+#include "piarm.h"
+#include "pithumb.h"
+#endif
+#include "direct.h"
 
-extern vector<Output*> output;
-extern int onr;
-
-extern void (*piCPU)(string&,SourceList*);
-
-//eof
+#endif
+//eof sjasm.h

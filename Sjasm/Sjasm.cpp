@@ -1,8 +1,8 @@
 /*
 
-  Sjasm Z80 Assembler version 0.42
+  SjASM Z80 Assembler
 
-  Copyright 2011 Sjoerd Mastijn
+  Copyright (c) 2006 Sjoerd Mastijn
 
   This software is provided 'as-is', without any express or implied warranty.
   In no event will the authors be held liable for any damages arising from the
@@ -24,79 +24,79 @@
 
 */
 
+// sjasm.cpp
+
 #include "sjasm.h"
 
-Options options;
+char destfilename[LINEMAX],listfilename[LINEMAX],expfilename[LINEMAX],sourcefilename[LINEMAX],symfilename[LINEMAX];
 
-string version="0.42c";
+char filename[LINEMAX],*lp,line[LINEMAX],temp[LINEMAX],*tp,pline[LINEMAX*2],eline[LINEMAX*2],*bp;
 
-string starttime,startdate,sourcefilename,destfilename,listfilename,expfilename,symfilename;
-int listcurlin,adres,page,pass,labsnok,mapadr,synerr,again,labelnotfound,macronummer=0,unieknummer=0,curlin,lablin;
-int lpass=0,errors=0,adrerrors=0,symfile=0,dolistfile=1,labellisting=1,partlisting=1;
-char tobuffer[64];
+int pass,labelnotfound,nerror,include=-1,running,labellisting=0,listfile=1,donotlist,listdata,listmacro;
+int macronummer,lijst,reglenwidth,synerr=1,symfile=0;
+aint adres,mapadr,gcurlin,lcurlin,curlin,destlen,size=(aint)-1,preverror=(aint)-1,maxlin=0,comlin;
+#ifdef METARM
+cpus cpu;
+#endif
+char *huidigzoekpad;
 
-IntList pages;
-LabelTable labtab;
-NumLabelTable numlabtab;
-vector<string> cmdparameter;
+void (*piCPUp)(void);
 
-void (*piCPU)(string&,SourceList*);
+#ifdef SECTIONS
+sections section;
+#endif
 
-string maclabp,vorlabp,modlabp;
+char *modlabp,*vorlabp,*macrolabp;
 
-void initpass() {
-  listopt.init();
-  ++pass;
-  onr=0;
-  listcurlin=0;
-  curlin=0;
-  adres=0;
-  page=0;
-  pages.clear();
-  pages.push_back(page);
-  mapadr=0;
-  labsnok=0;
-  synerr=1;
-  lablin=0;
-  maclabp="";
-  vorlabp="_";
-  modlabp="";
-  piCPU=pimsx;
-//  plist=listlistlinez80;
-  while (!modulestack.empty()) modulestack.pop();
-  while (!mapadrstack.empty()) mapadrstack.pop();
-  resetoutput();
-  numlabtab.resetindex();
-  routlabel=0;
+stringlst *lijstp;
+labtabcls labtab;
+loklabtabcls loklabtab;
+definetabcls definetab;
+macdefinetabcls macdeftab;
+macrotabcls macrotab;
+structtabcls structtab;
+adrlst *maplstp=0;
+stringlst *modlstp=0,*dirlstp=0;
+#ifdef SECTIONS
+pooldatacls pooldata;
+pooltabcls pooltab;
+#endif
+
+void InitPass(int p) {
+#ifdef SECTIONS
+  section=TEXT;
+#endif
+  reglenwidth=1;
+  if (maxlin>9) reglenwidth=2;
+  if (maxlin>99) reglenwidth=3;
+  if (maxlin>999) reglenwidth=4;
+  if (maxlin>9999) reglenwidth=5;
+  if (maxlin>99999) reglenwidth=6;
+  if (maxlin>999999) reglenwidth=7;
+  modlabp=0; vorlabp="_"; macrolabp=0; listmacro=0;
+  pass=p; adres=mapadr=0; running=1; gcurlin=lcurlin=curlin=0;
+  eadres=0; epadres=0; macronummer=0; lijst=0; comlin=0;
+  modlstp=0;
+#ifdef METARM
+  cpu=Z80; piCPUp=piZ80;
+#endif
+  structtab.init();
+  macrotab.init();
+  definetab.init();
+  macdeftab.init();
 }
 
-void endpass() {
-  ListOpt olistopt=listopt;
-  while (!phasestack.empty()) {
-    listopt._filename=phasestack.top()._filename;
-    error(phasestack.top()._curlin,phasestack.top()._listcurlin,"PHASE without DEPHASE","");
-    phasestack.pop();
-  }
-  while (!ifstack.empty()) {
-    listopt._filename=ifstack.top()._filename;
-    error(ifstack.top()._curlin,ifstack.top()._listcurlin,"IF without ENDIF","");
-    ifstack.pop();
-  }
-  listopt=olistopt;
-}
-
-void getoptions(char **&argv,int &i) {
+void getOptions(char **&argv,int &i) {
   char *p,c;
   while (argv[i] && *argv[i]=='-') {
     p=argv[i++]+1; 
     do {
       c=*p++;
       switch (tolower(c)) {
-//      case 'q': dolistfile=0; break;
+      case 'q': listfile=0; break;
       case 's': symfile=1; break;
-//      case 'l': labellisting=1; partlisting=1; break;
-      case 'i': paths.push_back(p); p=""; break;
-      case 'j': options.optimizejumps=true; break;
+      case 'l': labellisting=1; break;
+      case 'i': dirlstp=new stringlst(p,dirlstp); p=""; break;
       default:
         cout << "Unrecognised option: " << c << endl;
         break;
@@ -105,98 +105,74 @@ void getoptions(char **&argv,int &i) {
   }
 }
 
-string makefilename(string &fn, string ext) {
-  int p=(int)fn.find_last_of('.');
-  if (p==string::npos) return fn+ext;
-  else return fn.substr(0,p)+ext;
-}
-
-#ifdef WIN32
-int __cdecl main(int argc, char *argv[]) {
-#else
 int main(int argc, char *argv[]) {
-#endif
-#ifdef _DEBUG
-  cout << "Sjasm v" << version << " [" << __DATE__ " " << __TIME__ << "]\n";
-#else
-#ifdef _METARM
-  cout << "Sjasm v" << version << " - www.xl2s.tk\n";
-#else
-  cout << "Sjasm Z80 Assembler v" << version << " - www.xl2s.tk\n";
-#endif
-#endif
+  char zoekpad[MAX_PATH];
+  char *p;
+  int i=1;
 
+  cout << "SjASM Z80 Assembler v0.39g6 - www.xl2s.tk" << endl;
+  sourcefilename[0]=destfilename[0]=listfilename[0]=expfilename[0]=0;
   if (argc==1) {
-    cout << "Copyright 2011 Sjoerd Mastijn\n";
-    cout << "\nUsage:\nsjasm [-options] sourcefile [targetfile [parameters]]\n";
+    cout << "Copyright 2006 Sjoerd Mastijn" << endl;
+    cout << "\nUsage:\nsjasm [-options] sourcefile [targetfile [listfile [exportfile]]]\n";
     cout << "\nOption flags as follows:\n";
-//    cout << "  -l        Label table in listing\n";
+    cout << "  -l        Label table in listing\n";
     cout << "  -s        Generate .SYM symbol file\n";
-//    cout << "  -q        No listing\n";
+    cout << "  -q        No listing\n";
     cout << "  -i<path>  Includepath\n";
-    cout << "  -j        Optimize jumps\n";
     exit(1);
   }
 
-  int i=1,p;
-  getoptions(argv,i);
-  if (argv[i]) sourcefilename=argv[i++];
-  if (argv[i]) destfilename=argv[i++];
-  p=10; while (p--) cmdparameter.push_back(" ");
-  p=1; while (argv[i] && p<10) cmdparameter[p++]=argv[i++];
-  if (argv[i]) error("Too many command line parameters");
+  GetCurrentDirectory(MAX_PATH,zoekpad);
+  huidigzoekpad=zoekpad;
+
+  getOptions(argv,i); if (argv[i]) strcpy(sourcefilename,argv[i++]);
+  getOptions(argv,i); if (argv[i]) strcpy(destfilename,argv[i++]);
+  getOptions(argv,i); if (argv[i]) strcpy(listfilename,argv[i++]);
+  getOptions(argv,i); if (argv[i]) strcpy(expfilename,argv[i++]);
+  getOptions(argv,i);
 
   if (!sourcefilename[0]) { cout << "No inputfile" << endl; exit(1); }
-  if (!destfilename[0]) destfilename=makefilename(sourcefilename,".out");
-  listfilename=makefilename(destfilename,".lst");
-  expfilename=makefilename(destfilename,".exp");
-  symfilename=makefilename(destfilename,".sym");
+  if (!destfilename[0]) {
+    strcpy(destfilename,sourcefilename);
+    if (!(p=strchr(destfilename,'.'))) p=destfilename; else *p=0;
+    strcat(p,".out");
+  }
+  if (!listfilename[0]) {
+    strcpy(listfilename,sourcefilename);
+    if (!(p=strchr(listfilename,'.'))) p=listfilename; else *p=0;
+    strcat(p,".lst");
+  }
+  strcpy(symfilename,expfilename);
+  if (!expfilename[0]) {
+    strcpy(expfilename,sourcefilename);
+    if (!(p=strchr(expfilename,'.'))) p=expfilename; else *p=0;
+    strcat(p,".exp");
+  }
+  if (!symfilename[0]) {
+    strcpy(symfilename,sourcefilename);
+    if (!(p=strchr(symfilename,'.'))) p=symfilename; else *p=0;
+    strcat(p,".sym");
+  }
 
-  initpreprocessor();
-  initPidata();
-  initDir();
-  initPiMSX();
-#ifdef METARM
-  initPiThumb();
-  initPiArm();
-#endif
+  Initpi();
 
-  time_t st=time(0);
-  strftime(tobuffer,64,"%H:%M:%S",localtime(&st)); starttime=tobuffer;
-  strftime(tobuffer,64,"%Y.%m.%d",localtime(&st)); startdate=tobuffer;
+  InitPass(1); OpenList(); OpenFile(sourcefilename);
 
-  pass=0;
-  initpass();
-  output.push_back(new Output(destfilename));
-  RawSource *rawsource=new RawSource(sourcefilename);
-  rawsource->GetSource().push_back(new dPool()); //
-  endpass();
-  sortoutput();
+  cout << "Pass 1 complete (" << nerror << " errors)" << endl;
 
-  do {
-    initpass();
-    process(rawsource->GetSource());
-    endpass();
-    sortoutput();
-  } while (pass<3 || labsnok && !errors);
+  InitPass(2); OpenDest(); OpenFile(sourcefilename);
 
-  StringList dump;
-  if (partlisting) { dumpoutput(dump); }
+  if (labellisting) labtab.dump();
 
-  saveoutput();
+  cout << "Pass 2 complete" << endl;
 
-  initpass();
-  lpass=1;
-  listlist(rawsource->GetSource(),dump);
+  Close();
 
-  if (symfile) outputsymbols();
+  if (symfile) labtab.dumpsym();
 
-#ifdef _DEBUG
-  cout << "\nPRESS ENTER";
-  cin.get();
-#endif
+  cout << "Errors: " << nerror << endl << flush;
 
-  return (errors+adrerrors)!=0;
+  return (nerror!=0);
 }
-
-//eof
+//eof sjasm.cpp

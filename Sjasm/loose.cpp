@@ -1,8 +1,8 @@
 /*
 
-  Sjasm Z80 Assembler version 0.42
+  SjASM Z80 Assembler
 
-  Copyright 2011 Sjoerd Mastijn
+  Copyright (c) 2006 Sjoerd Mastijn
 
   This software is provided 'as-is', without any express or implied warranty.
   In no event will the authors be held liable for any damages arising from the
@@ -24,40 +24,34 @@
 
 */
 
-// fileio.h
+// loose.cpp
 
-enum FILEMODE { OVERWRITE, UPDATE };
-extern StringList paths;
+#ifndef WIN32
 
-string fileexists(string,string);
-string getpath(string&);
-string getfilename(string&);
+#include "sjasm.h"
 
-class ReadFile {
-public:
-  ReadFile(string);
-  ~ReadFile();
-  void readtostringlist(StringList&);
-  void getbuffer(byte *&buffer,int &size) { buffer=_buffer; size=_size; }
-  bool ok() { return _buffer!=0; }
-private:
-  int _size;
-  byte *_buffer;
-};
+void GetCurrentDirectory(int whatever, char *pad) {
+  pad[0]=0;
+}
 
-class WriteFile {
-public:
-  WriteFile(string name, FILEMODE mode=OVERWRITE);
-  ~WriteFile();
-  void write(Data&);
-  void write(StringList&);
-  void skip(int);
-  bool ok() { return _file!=0; }
-private:
-  void _writebuf();
-  FILE *_file;
-  FILEMODE _mode;
-  Data _buffer;
-};
+int SearchPath(char*oudzp,char*filename,char*whatever,int maxlen,char*nieuwzp,char**ach) {
+  FILE *fp;
+  char *p,*f;
+  if (filename[0]=='/') strcpy(nieuwzp,filename);
+  else { 
+    strcpy(nieuwzp,oudzp); 
+    if (*nieuwzp && nieuwzp[strlen(nieuwzp)]!='/') strcat(nieuwzp,"/");
+    strcat(nieuwzp,filename); 
+  }
+  if (ach) {
+    p=f=nieuwzp;
+    while (*p) { if (*p=='/') f=p+1; ++p; }
+    *ach=f;
+  }
+  fp=fopen(nieuwzp,"r"); if (fp) fclose(fp);
+  return (long)fp;
+}
 
-//eof
+#endif
+
+//eof loose.cpp

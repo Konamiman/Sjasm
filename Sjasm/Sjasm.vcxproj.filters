@@ -18,40 +18,19 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="datadir.h">
+    <ClInclude Include="direct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="datastructures.h">
+    <ClInclude Include="loose.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="directives.h">
+    <ClInclude Include="parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="errors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="expressions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fileio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="output.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pimsx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="preprocessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rawsource.h">
+    <ClInclude Include="piz80.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="reader.h">
@@ -60,55 +39,37 @@
     <ClInclude Include="sjasm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source.h">
+    <ClInclude Include="sjio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sjasm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="datadir.cpp">
+    <ClCompile Include="direct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="datastructures.cpp">
+    <ClCompile Include="loose.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="directives.cpp">
+    <ClCompile Include="parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="errors.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="expressions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fileio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="output.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pimsx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="preprocessor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rawsource.cpp">
+    <ClCompile Include="piz80.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="reader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source.cpp">
+    <ClCompile Include="sjio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Makefile" />
+    <ClCompile Include="tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

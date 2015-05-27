@@ -1,8 +1,8 @@
 /*
 
-  Sjasm Z80 Assembler version 0.42
+  SjASM Z80 Assembler
 
-  Copyright 2011 Sjoerd Mastijn
+  Copyright (c) 2006 Sjoerd Mastijn
 
   This software is provided 'as-is', without any express or implied warranty.
   In no event will the authors be held liable for any damages arising from the
@@ -26,52 +26,36 @@
 
 // reader.h
 
-int cmphstr(string&,string);
-int getstringlength(string&);
-void skipstring(istring&);
-string tolower(string);
-void skipblanks(string&);
-int comma(string&);
-int needcomma(string&);
-string getinstructionpart(string&);
-string getinstruction(string&);
-string getid(string&);
-void checkjunk(string&);
-char nextchar(istring const&, string const&);
-int sbcneed(string&,char);
-int cneed(string&,char);
-int needa(string&,string,int,string="",int=0,string="",int=0);
-int need(string&,char*);
-int needequ(string&);
-int needfield(string&);
-int needset(string&);
-int islabchar(char);
-void checkparen(string&);
-int check8(int);
-int check5(int);
-int check8u(int);
-int check3u(int);
-int checki(int);
-int check16(int);
-int check24(int);
-void makestring(string&);
-void getstring(string&,string&);
-void getcharconstchar(string&,int&);
-StringList getarguments(string&);
-string getargument(string&,bool=false,bool=false);
-template <class T> string tostr(T n,int w=0) { ostringstream s; s.width(w); s << n; return s.str(); }
-string tohex(int,int=4);
-int getinSTRUCTion(string&);
-string trim(string);
-void getpage(string&,IntList&);
+int white();
+int skipblanks();
+void skipblanks(char *&p);
+int needequ();
+int needfield();
+char *getid(char *&p);
+char *getinstr(char *&p);
+int comma(char *&p);
+int oparen(char *&p,char c);
+int cparen(char *&p);
+char *getparen(char *p);
+int check8(unsigned aint val);
+int check8o(long val);
+int check16(unsigned aint val);
+int check24(unsigned aint val);
+int need(char *&p, char c);
+int need(char *&p, char *c);
+int needa(char *&p, char *c1, int r1, char *c2=0, int r2=0, char *c3=0, int r3=0);
+int getConstant(char *&op, aint &val);
+int getCharConst(char *&p, aint &val);
+int getCharConstChar(char *&op, aint &val);
+int getBytes(char *&p, int e[], int add, int dc);
+int cmphstr(char *&p1, char *p2);
+char *getfilename(char *&p);
+int needcomma(char *&p);
+int needbparen(char *&p);
+int islabchar(char p);
+structmembs GetStructMemberId(char *&p);
+#ifdef METARM
+char *getid3(char *&p);
+#endif
+//eof reader.h
 
-class Find {
-public:
-  Find(char*s) { for (int i=0;i!=256;++i) _c[i]=false; while (*s) _c[*s++]=true; }
-  int find(string&s) { for (int i=0;i!=(int)s.size();++i) if (_c[s[i]]) return i; return (int)string::npos; }
-  int findnot(string&s) { for (int i=0;i!=(int)s.size();++i) if (!_c[s[i]]) return i; return (int)string::npos; }
-private:
-  bool _c[256];
-};
-
-//eof

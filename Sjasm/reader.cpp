@@ -1,8 +1,8 @@
 /*
 
-  Sjasm Z80 Assembler version 0.42
+  SjASM Z80 Assembler
 
-  Copyright 2011 Sjoerd Mastijn
+  Copyright (c) 2006 Sjoerd Mastijn
 
   This software is provided 'as-is', without any express or implied warranty.
   In no event will the authors be held liable for any damages arising from the
@@ -28,9 +28,9 @@
 
 #include "sjasm.h"
 
-int cmphstr(string &p1, string p2) {
+int cmphstr(char *&p1, char *p2) {
   int i=0;
-  if (isupper(p1[i])) 
+  if (isupper(*p1)) 
     while (p2[i]) { 
       if (p1[i]!=toupper(p2[i])) return 0; 
       ++i; 
@@ -41,416 +41,383 @@ int cmphstr(string &p1, string p2) {
       ++i; 
     }
   if (p1[i]>' ') return 0;
-  p1=p1.substr(i);
+  p1+=i;
   return 1;
 }
 
-int getstringlength(string &s) {
-  int p=0;
-  if (s[0]=='"') {
-    for(;;) {
-      ++p; if (!s[p]) break;
-      if (s[p]=='\\') {
-        if (s[p+1]=='"') { ++p; continue; }
-        if (s[p+1]=='\\') { ++p; continue; }
-      }
-      if (s[p]=='"') { ++p; break; }
-    }
-  } else if (s[0]=='\'') {
-    for(;;) {
-      ++p; if (!s[p]) break;
-      if (s[p]=='\'') { ++p; break; }
-    }
-  } else {
-    error("getstringlength",ERRINTERNAL);
-  }
-  return p;
+int white() {
+  return (*lp && *lp<=' ');
 }
 
-string tolower(string b) {
-  char *bp,*p;
-  const char *op=b.c_str();
-  if (b.length()+1>64) bp=p=(char*)malloc(b.length()+1);
-  else bp=p=tobuffer;
-  while(*p++=(char)tolower(*op)) ++op;
-  return bp;
+int skipblanks() {
+  while(*lp && *lp<=' ') ++lp;
+  return (*lp==0);
 }
 
-inline void skipblanks(string &p) {
-  int pos=(int)p.find_first_not_of(' ');
-  if (pos==string::npos) p.clear();
-  else p=p.substr(pos);
+void skipblanks(char *&p) {
+  while (*p && *p<=' ') ++p;
 }
 
-int comma(string &p) {
-  skipblanks(p);
-  if (p[0]!=',') return 0;
-  p.erase(0,1); return 1;
-}
-
-int needcomma(string &p) {
-  if (comma(p)) return 1;
-  error("Comma expected");
-  return 0;
-}
-
-Find fspacedot(" .");
-
-string getinstructionpart(string &p) {
-  int pos=fspacedot.find(p),u=0;
-  string d=p.substr(0,pos);
-  if (pos!=string::npos) p=p.substr(pos); else p.clear();
-  for (istring i=d.begin(); i!=d.end(); ++i) if ((*i)==toupper(*i)) ++u;
-  if (d.size()==u) return tolower(d);
-  return d;
-}
-
-string getinstruction(string &p) {
-  string d=getinstructionpart(p);
-  if (!p.empty()) if (p[0]=='.') d+='.';
-  return d;
-}
-
-Find fid("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890_");
-
-string getid(string &p) {
-  skipblanks(p);
-  if (!isalpha(p[0]) && p[0]!='_') return "";
-  int pos=fid.findnot(p);
-  string d=p.substr(0,pos);
-  if (pos!=string::npos) p=p.substr(pos); else p.clear();
-  return d;
-}
-
-void checkjunk(string &s) {
-  skipblanks(s);
-  if (s.empty()) return;
-#ifdef _DEBUG
-  error("Unexpected",s);
-#else
-  error("Unexpected",s,ERRREP);
-#endif
-  s.clear();
-}
-
-char nextchar(istring const &p, string const &s) {
-  if ((p+1)==s.end()) return 0;
-  return *(p+1);
-}
-
-int sbcneed(string &p, char c) {
-  skipblanks(p); if (p[0]!=c) return 0;
-  p.erase(0,1); return 1;
-}
-
-int cneed(string &p, char c) {
-  if (p[0]!=c) return 0;
-  p.erase(0,1); return 1;
-}
-
-int needa(string &p, string c1, int r1, string c2, int r2, string c3, int r3) {
-  if (!isalpha(p[0])) return 0;
-  if (cmphstr(p,c1)) return r1;
-  if (!c2.empty() && cmphstr(p,c2)) return r2;
-  if (!c3.empty() && cmphstr(p,c3)) return r3;
-  return 0;
-}
-
-int need(string &p, char *c) {
-  skipblanks(p);
-  while (*c) {
-    if (p[0]!=*c) { c+=2; continue; }
-    ++c;
-    if (*c==' ') { p.erase(0,1); return *(c-1); }
-    if (*c=='_' && p[1]!=*(c-1)) { p.erase(0,1); return *(c-1); }
-    if (p[1]==*c) { p=p.substr(2); return *(c-1)+*c; }
-    ++c;
-  }
-  return 0;
-}
-
-int needequ(string &lp) {
-  string olp=lp;
-  skipblanks(lp);
-  if (lp[0]=='=') { lp.erase(0,1); return 1; }
+int needequ() {
+  char *olp=lp;
+  skipblanks();
+  if (*lp=='=') { ++lp; return 1; }
+  if (*lp=='.') ++lp;
   if (cmphstr(lp,"equ")) return 1;
   lp=olp;
   return 0;
 }
 
-int needfield(string &lp) {
-  string olp=lp;
-  skipblanks(lp);
-  if (lp[0]=='#' && lp[1]!='#') { lp.erase(0,1); return 1; }
+int needfield() {
+  char *olp=lp;
+  skipblanks();
+  if (*lp=='#') { ++lp; return 1; }
+  if (*lp=='.') ++lp;
+  if (cmphstr(lp,"field")) return 1;
   lp=olp;
   return 0;
 }
 
-int needset(string &lp) {
-  string olp=lp;
-  skipblanks(lp);
-  if (lp[0]==':' && lp[1]=='=') { lp=lp.substr(2); return 1; }
-  lp=olp;
+int comma(char *&p) {
+  skipblanks(p);
+  if (*p!=',') return 0;
+  ++p; return 1;
+}
+
+int cpc='4';
+
+int oparen(char *&p, char c) {
+  skipblanks(p);
+  if (*p!=c) return 0;
+  if (c=='[') cpc=']';
+  if (c=='(') cpc=')';
+  if (c=='{') cpc='}';
+  ++p; return 1;
+}
+
+int cparen(char *&p) {
+  skipblanks(p);
+  if (*p!=cpc) return 0;
+  ++p; return 1;
+}
+
+char *getparen(char *p) {
+  int teller=0;
+  skipblanks(p);
+  while (*p) {
+    if (*p=='(') ++teller;
+    else if (*p==')') 
+      if (teller==1) { skipblanks(++p); return p; } else --teller;
+    ++p;
+  }
   return 0;
+}
+
+char *getid(char *&p) {
+  char nid[LINEMAX],*np;
+  np=nid;
+  skipblanks(p);
+  if (!isalpha(*p) && *p!='_') return 0;
+  while(*p) {
+    if (!isalnum(*p) && *p!='_' && *p!='.' && *p!='?' && *p!='!' && *p!='#' && *p!='@') break;
+    *np=*p; ++p; ++np;
+  }
+  *np=0;
+  return strdup(nid);
+}
+
+char *getinstr(char *&p) {
+  char nid[LINEMAX],*np;
+  np=nid;
+  skipblanks(p);
+  if (!isalpha(*p) && *p!='.') return 0; else { *np=*p; ++p; ++np; }
+  while(*p) {
+    if (!isalnum(*p)) break;
+    *np=*p; ++p; ++np;
+  }
+  *np=0;
+  return strdup(nid);
+}
+
+int check8(unsigned aint val) {
+  if (val!=(val&255) && ~val>127) { error("Bytes lost",0); return 0; }
+  return 1;
+}
+
+int check8o(long val) {
+  if (val<-128 || val>127) { error("Offset out of range",0); return 0; }
+  return 1;
+}
+
+int check16(unsigned aint val) {
+  if (val!=(val&65535) && ~val>32767) { error("Bytes lost",0); return 0; }
+  return 1;
+}
+
+int check24(unsigned aint val) {
+  if (val!=(val&16777215) && ~val>8388607) { error("Bytes lost",0); return 0; }
+  return 1;
+}
+
+int need(char *&p, char c) {
+  skipblanks(p);
+  if (*p!=c) return 0;
+  ++p; return 1;
+}
+
+int needa(char *&p, char *c1, int r1, char *c2, int r2, char *c3, int r3) {
+//  skipblanks(p);
+  if (!isalpha(*p)) return 0;
+  if (cmphstr(p,c1)) return r1;
+  if (c2 && cmphstr(p,c2)) return r2;
+  if (c3 && cmphstr(p,c3)) return r3;
+  return 0;
+}
+
+int need(char *&p, char *c) {
+  skipblanks(p);
+  while (*c) {
+    if (*p!=*c) { c+=2; continue; }
+    ++c;
+    if (*c==' ') { ++p; return *(c-1); }
+    if (*c=='_' && *(p+1)!=*(c-1)) { ++p; return *(c-1); }
+    if (*(p+1)==*c) { p+=2; return *(c-1)+*c; }
+    ++c;
+  }
+  return 0;
+}
+
+int getval(int p) {
+  switch (p) {
+  case '0': case '1': case '2': case '3': case '4':
+  case '5': case '6': case '7': case '8': case '9':
+    return p-'0';
+  default:
+    if (isupper(p)) return p-'A'+10;
+    if (islower(p)) return p-'a'+10;
+    return 200;
+  }
+}
+
+int getConstant(char *&op, aint &val) {
+  aint base,pb=1,v,oval;
+  char *p=op,*p2,*p3;
+  skipblanks(p); p3=p;
+  val=0;
+  switch (*p) {
+  case '#':
+  case '$': 
+    ++p;
+    while (isalnum(*p)) {
+      if ((v=getval(*p))>=16) { error("Digit not in base",op); return 0; }
+      oval=val; val=val*16+v; ++p; if (oval>val) error("Overflow",0,SUPPRES);
+    }
+    if (p-p3<2) { error("Syntax error",op,CATCHALL); return 0; }
+    op=p; return 1;
+  case '%':
+    ++p;
+    while (isdigit(*p)) {
+      if ((v=getval(*p))>=2) { error("Digit not in base",op); return 0; }
+      oval=val; val=val*2+v; ++p; if (oval>val) error("Overflow",0,SUPPRES);
+    }
+    if (p-p3<2) { error("Syntax error",op,CATCHALL); return 0; }
+    op=p; return 1;
+  case '0':
+    ++p;
+    if (*p=='x' || *p=='X') {
+      ++p;
+      while (isalnum(*p)) {
+        if ((v=getval(*p))>=16) { error("Digit not in base",op); return 0; }
+        oval=val; val=val*16+v; ++p; if (oval>val) error("Overflow",0,SUPPRES);
+      }
+      if (p-p3<3) { error("Syntax error",op,CATCHALL); return 0; }
+      op=p; return 1;
+    }
+  default:
+    while(isalnum(*p)) ++p;
+    p2=p--;
+    if (isdigit(*p)) base=10;
+    else if (*p=='b') { base=2; --p; }
+    else if (*p=='h') { base=16; --p; }
+    else if (*p=='B') { base=2; --p; }
+    else if (*p=='H') { base=16; --p; }
+    else if (*p=='o') { base=8; --p; }
+    else if (*p=='q') { base=8; --p; }
+    else if (*p=='d') { base=10; --p; }
+    else if (*p=='O') { base=8; --p; }
+    else if (*p=='Q') { base=8; --p; }
+    else if (*p=='D') { base=10; --p; }
+    else return 0;
+    do {
+      if ((v=getval(*p))>=base) { error("Digit not in base",op); return 0; }
+      oval=val; val+=v*pb; if (oval>val) error("Overflow",0,SUPPRES);
+      pb*=base;
+    } while (p--!=p3);
+    op=p2;
+    return 1;
+  }
+}
+
+int getCharConstChar(char *&op, aint &val) {
+  if ((val=*op++)!='\\') return 1;
+  switch (val=*op++) {
+  case '\\': case '\'': case '\"': case '\?':
+    return 1;
+  case 'n': case 'N': val=10; return 1;
+  case 't': case 'T': val=9; return 1;
+  case 'v': case 'V': val=11; return 1;
+  case 'b': case 'B': val=8; return 1;
+  case 'r': case 'R': val=13; return 1;
+  case 'f': case 'F': val=12; return 1;
+  case 'a': case 'A': val=7; return 1;
+  case 'e': case 'E': val=27; return 1;
+  case 'd': case 'D': val=127; return 1;
+  default: --op; val='\\'; error("Unknown escape",op); return 1;
+  }
+  return 0;
+}
+
+int getCharConst(char *&p, aint &val) {
+  aint s=24,r,t=0; val=0;
+  char *op=p,q;
+  if (*p!='\'' && *p!='"') return 0;
+  q=*p++;
+  do {
+    if (!*p || *p==q) { p=op; return 0; }
+    getCharConstChar(p,r);
+    val+=r<<s; s-=8; ++t;
+  } while (*p!=q);
+  if (t>4) error("Overflow",0,SUPPRES);
+  val=val>>(s+8);
+  ++p;
+  return 1;
+}
+
+int getBytes(char *&p, int e[], int add, int dc) {
+  aint val;
+  int t=0;
+  while ('o') {
+    skipblanks(p);
+    if (!*p) { error("Expression expected",0,SUPPRES); break; }
+    if (t==128) { error("Too many arguments",p,SUPPRES); break; }
+    if (*p=='"') {
+      p++;
+      do {
+        if (!*p || *p=='"') { error("Syntax error",p,SUPPRES); e[t]=-1; return t; }
+        if (t==128) { error("Too many arguments",p,SUPPRES); e[t]=-1; return t; }
+        getCharConstChar(p,val); check8(val); e[t++]=(val+add)&255;
+      } while (*p!='"');
+      ++p; if (dc && t) e[t-1]|=128;
+    } else {
+      if (ParseExpression(p,val)) { check8(val); e[t++]=(val+add)&255; }
+      else { error("Syntax error",p,SUPPRES); break; }
+    }
+    skipblanks(p); if (*p!=',') break; ++p;
+  }
+  e[t]=-1; return t;
+}
+
+char *getfilename(char *&p) {
+  int o=0;
+  char *fn,*np;
+  np=fn=new char[LINEMAX];
+  skipblanks(p);
+
+  switch(*p) {
+  case '"':
+    ++p;
+    while (*p && *p!='"') { *np=*p; ++np; ++p; }
+    if (*p=='"') ++p; else error("No closing '\"'",0);
+    break;
+  case '<':
+    while (*p && *p!='>') { *np=*p; ++np; ++p; }
+    if (*p=='>') ++p; else error("No closing '>'",0);
+    break;
+  default:
+    while (!white() && *p!=',') { *np=*p; ++np; ++p; }
+    break;
+  }
+/*  
+  if (*p=='"') { o=1; ++p; }
+  else if (*p=='<') { o=2; }
+  while (!white() && *p!='"' && *p!='>') { *np=*p; ++np; ++p; }
+  if (o==1) if (*p=='"') ++p; else error("No closing '\"'",0);
+  else if (o==2 && *p!='>') error("No closing '>'",0);
+*/
+  *np=0; 
+  for(np=fn;*np;++np) {
+#ifdef WIN32
+     if (*np=='/') *np='\\';
+#else
+     if (*np=='\\') *np='/';
+#endif
+  }
+  return fn;
+}
+
+
+#ifdef METARM
+char *getid3(char *&p) {
+  int tel=3;
+  char nid[4],*np;
+  np=nid;
+  skipblanks(p);
+  if (!isalpha(*p) && *p!='_') return NULL;
+  while(*p && tel--) {
+    if (!isalnum(*p) && *p!='_') break;
+    *np=*p; ++p; ++np;
+  }
+  *np=0;
+  np=new char[strlen(nid)];
+  strcpy(np,nid);
+  return np;
+}
+#endif
+
+int needcomma(char *&p) {
+  skipblanks(p);
+  if (*p!=',') error("Comma expected",0);
+  return (*(p++)==',');
+}
+
+int needbparen(char *&p) {
+  skipblanks(p);
+  if (*p!=']') error("']' expected",0);
+  return (*(p++)==']');
 }
 
 int islabchar(char p) {
-  if (isalnum(p) || p=='_' || p=='.') return 1;
+  if (isalnum(p) || p=='_' || p=='.' || p=='?' || p=='!' || p=='#' || p=='@') return 1;
   return 0;
 }
 
-void checkparen(string &s) {
-  int t=0,p=0;
-  while (1) {
-    switch (s[p]) {
-    case 0: return;
-    case '(': ++t; break;
-    case ')': if (t==1) { ++p; s=s.substr(p); skipblanks(s); return; } if (!--t) return; break;
-    case '\'': for(;;) { ++p; if (!s[p]) return; if (s[p]=='\'') break; } break;
-    case '"': for(;;) { ++p; if (!s[p]) return; if (s[p]=='\\' && s[p+1]=='"') { ++p; continue; } if (s[p]=='"') break; } break;
-    default: break;
-    }
-    ++p;
-  }
-}
-
-int check8(int val) {
-  unsigned int v=val;
-  if (v!=(v&255) && ~v>127) errorvalue();
-  return val & 255;
-}
-
-int check5(int val) {
-  unsigned int v=val;
-  if (v!=(v&31) && ~v>31) errorvalue();
-  return val & 31;
-}
-
-int check3u(int val) {
-  unsigned int v=val;
-  if (v>7) errorvalue();
-  return val & 7;
-}
-
-int check8u(int val) {
-  unsigned int v=val;
-  if (v>255) errorvalue();
-  return val & 255;
-}
-
-int checki(int val) {
-  if (val<-128 || val>127) errorvalue("Offset out of range");
-  return val & 255;
-}
-
-int check16(int val) {
-  unsigned int v=val;
-  if (v!=(v&65535) && ~v>32767) errorvalue();
-  return val & 65535;
-}
-
-int check24(int val) {
-  unsigned int v=val;
-  if (v!=(val&16777215) && ~v>8388607) errorvalue();
-  return val & 16777215;
-}
-
-void makestring(string &s) {
-  string res;
-  for(istring i=s.begin();i!=s.end();++i) { if (*i=='"' || *i=='\\') res+='\\'; res+=*i; }
-  s=res;
-}
-
-void getstring(string &s,string &e) {
-  e.clear();
-  skipblanks(s);
-  if (s.empty()) { error("String expected"); return; }
-  if (s[0]=='\'') {
-    for(;;) {
-      s.erase(0,1);
-      if (s.empty()) break;
-      if (s[0]=='\'') { s.erase(0,1); break; }
-      e.push_back(s[0]);
-    }
-  } else if (s[0]=='"') {
-    s.erase(0,1);
-    do {
-      int val;
-      if (s.empty() || s[0]=='"') { error("Syntax error",ERRREP); break; }
-      getcharconstchar(s,val); e.push_back((byte)val);
-    } while (s[0]!='"');
-    s.erase(0,1);
-  } else
-    error("String expected");
-}
-
-void getcharconstchar(string &op, int &val) {
-  val=op[0]; op.erase(0,1);
-  if (val!='\\') return;
-  val=op[0]; op.erase(0,1);
-  switch (val) {
-  case '\\': case '\'': case '\"': case '\?':
-    return;
-  case 'n': case 'N': val=10; return;
-  case 't': case 'T': val=9; return;
-  case 'v': case 'V': val=11; return;
-  case 'b': case 'B': val=8; return;
-  case 'r': case 'R': val=13; return;
-  case 'f': case 'F': val=12; return;
-  case 'a': case 'A': val=7; return;
-  case 'e': case 'E': val=27; return;
-  case 'd': case 'D': val=127; return;
-  default: val='\\'; error("Unknown escape"); return;
-  }
-}
-
-StringList getarguments(string &p) {
-  int pos,haakjes=0,heind,accolade=0;
-  StringList a;
-  string res;
-  if (heind=(p[0]=='(')) p.erase(0,1);
-  skipblanks(p);
-  for(;;) {
-    switch (p[0]) {
-    case 0:
-      if (heind) error("Closing ) expected");
-      if (!res.empty()) a.push_back(res); return a;
-    case '(':
-      ++haakjes; break;
-    case ')':
-      if (!haakjes-- && heind) { a.push_back(res); p.erase(0,1); return a; } 
-      break;
-    case '\'':
-    case '"':
-      pos=getstringlength(p); res+=p.substr(0,pos); p=p.substr(pos);
-      continue;
-    case ',':
-      if (!accolade) { a.push_back(res); res.clear(); p.erase(0,1); skipblanks(p); continue; }
-      break;
-    case '{':
-      if (!accolade++) { p.erase(0,1); continue; }
-      break;
-    case '}':
-      if (accolade--==1) { p.erase(0,1); continue; }
-      if (accolade<0) accolade=0;
-      break;
-    default:
-      break;
-    }
-    res+=p[0]; p.erase(0,1);
-  }
-//  return a;
-}
-
-string getargument(string &p, bool greedy, bool heind) {
-  int pos,accolade=0,haakjes=0;
-  string res;
-  skipblanks(p);
-  for(;;) {
-    switch (p[0]) {
-    case 0: return res;
-    case '\'':
-    case '"':
-      pos=getstringlength(p); res+=p.substr(0,pos); p=p.substr(pos);
-      continue;
-    case ',':
-      if (!accolade && !greedy) return res;
-      break;
-    case '{':
-      if (!accolade++) { p.erase(0,1); continue; }
-      break;
-    case '}':
-      if (accolade--==1) { p.erase(0,1); continue; }
-      if (accolade<0) accolade=0;
-      break;
-    case '(': 
-      ++haakjes;
-      break;
-    case ')':
-      if (!haakjes-- && heind) return res;
-      break;
-    default:
-      break;
-    }
-    res+=p[0]; p.erase(0,1);
-  }
-}
-
-string tohex(int n, int w) {
-  ostringstream s;
-  s.width(w);
-  s.fill('0');
-  s.flags(ios::hex|ios::uppercase);
-  s << n;
-  return s.str();
-}
-
-int getinSTRUCTion(string &s) {
-  string os=s;
-  skipblanks(s);
-  string n=getinstruction(s);
-  if (n.empty()) { s=os; return 0; }
-  switch (n.size()) {
-  case 1:
-    if (n[0]=='#') return 7;
+structmembs GetStructMemberId(char *&p) {
+  if (*p=='#') { ++p; if (*p=='#') { ++p; return SMEMBALIGN; } return SMEMBBLOCK; }
+//  if (*p=='.') ++p;
+  switch (*p*2+*(p+1)) {
+  case 'b'*2+'y': case 'B'*2+'Y': if (cmphstr(p,"byte")) return SMEMBBYTE; break;
+  case 'w'*2+'o': case 'W'*2+'O': if (cmphstr(p,"word")) return SMEMBWORD; break;
+  case 'b'*2+'l': case 'B'*2+'L': if (cmphstr(p,"block")) return SMEMBBLOCK; break;
+  case 'd'*2+'b': case 'D'*2+'B': if (cmphstr(p,"db")) return SMEMBBYTE; break;
+  case 'd'*2+'w': case 'D'*2+'W': 
+    if (cmphstr(p,"dw")) return SMEMBWORD;
+    if (cmphstr(p,"dword")) return SMEMBDWORD;
     break;
-  case 2:
-    if (n[0]=='#' && n[1]=='#') return 6;
-    if (n[0]=='d') {
-      if (n[1]=='b') return 1;
-      if (n[1]=='w') return 2;
-      if (n[1]=='t') return 3;
-      if (n[1]=='d') return 4;
-      if (n[1]=='s') return 5;
-    }
+  case 'd'*2+'s': case 'D'*2+'S': if (cmphstr(p,"ds")) return SMEMBBLOCK; break;
+  case 'd'*2+'d': case 'D'*2+'D': if (cmphstr(p,"dd")) return SMEMBDWORD; break;
+  case 'a'*2+'l': case 'A'*2+'L': if (cmphstr(p,"align")) return SMEMBALIGN; break;
+  case 'd'*2+'e': case 'D'*2+'E':
+    if (cmphstr(p,"defs")) return SMEMBBLOCK;
+    if (cmphstr(p,"defb")) return SMEMBBYTE;
+    if (cmphstr(p,"defw")) return SMEMBWORD;
+    if (cmphstr(p,"defd")) return SMEMBDWORD;
     break;
-  case 4:
-    if (n=="byte") return 1;
-    if (n=="word") return 2;
-    break;
-  case 5:
-    if (n=="dword") return 4;
-    if (n=="align") return 6;
+  case 'd'*2+'2': case 'D'*2+'2':
+    if (cmphstr(p,"d24")) return SMEMBD24;
     break;
   default:
     break;
   }
-  error("Syntax error");
-  s=os;
-  return 0;
+  return SMEMBUNKNOWN;
 }
-
-string trim(string s) {
-  if (s[0]==' ') skipblanks(s);
-  return s=s.substr(0,s.find_last_not_of(' ')+1);
-}
-
-void getpage(string &s, IntList &p) {
-  int min,max,i,v;
-  p.clear();
-  synerr=0;
-  while(1) {
-    if (ParseExpression(s,v)) min=v; else min=0;
-    if ((unsigned)min>255) { min=255; error("Invalid page number"); }
-    if (need(s,"..")) {
-      if (ParseExpression(s,v)) max=v; else max=255;
-      if ((unsigned)max>255) { max=255; error("Invalid pagerange"); }
-      if ((unsigned)min>(unsigned)max) { min=max; error("Invalid pagerange"); }
-      for (i=min; i!=max+1; ++i) p.push_back(i);
-    } else {
-      p.push_back(min);
-    }
-    if (!comma(s)) break;
-  }
-  synerr=1;
-  iIntList ii=p.begin();
-  while (ii!=p.end())
-    if (!output[onr]->pageok(*ii)) { 
-      error("Page does not exist",tostr(*ii)); 
-      ii=p.erase(ii);
-    }
-    else ++ii;
-  if (!p.size()) p.push_back(0);
-}
-
-//eof
+//eof reader.cpp
