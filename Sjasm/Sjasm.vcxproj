@@ -78,9 +78,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="datadir.h" />
     <ClInclude Include="datastructures.h" />
     <ClInclude Include="directives.h" />
