@@ -1,0 +1,1 @@
+[Manual for v0.42](https://bitbucket.org/konamiman/sjasm/src/v0.42/Manual/index.html)

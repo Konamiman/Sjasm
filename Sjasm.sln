@@ -5,6 +5,31 @@ VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sjasm", "Sjasm\Sjasm.vcxproj", "{F62DEB82-EA5F-4995-85F3-69FFBE6AC80E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manual", "Manual", "{0496EB84-5EFC-48EB-AA58-D2F45CBB8D84}"
+	ProjectSection(SolutionItems) = preProject
+		Manual\index.html = Manual\index.html
+		Manual\sjasmman0.html = Manual\sjasmman0.html
+		Manual\sjasmman1.html = Manual\sjasmman1.html
+		Manual\sjasmman10.html = Manual\sjasmman10.html
+		Manual\sjasmman11.html = Manual\sjasmman11.html
+		Manual\sjasmman12.html = Manual\sjasmman12.html
+		Manual\sjasmman2.html = Manual\sjasmman2.html
+		Manual\sjasmman3.html = Manual\sjasmman3.html
+		Manual\sjasmman4.html = Manual\sjasmman4.html
+		Manual\sjasmman5.html = Manual\sjasmman5.html
+		Manual\sjasmman6.html = Manual\sjasmman6.html
+		Manual\sjasmman7.html = Manual\sjasmman7.html
+		Manual\sjasmman8.html = Manual\sjasmman8.html
+		Manual\sjasmman9.html = Manual\sjasmman9.html
+		Manual\stijl.css = Manual\stijl.css
+		Manual\xl2sweblogo3.png = Manual\xl2sweblogo3.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8F2136CA-8FE5-4226-92F6-EE2D20485F42}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
