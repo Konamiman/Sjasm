@@ -24,6 +24,9 @@ syntax: glob
 *.orig
 *.rej
 
+.vs/
+.suo
+
 ## User-specific files
 
 *.suo
