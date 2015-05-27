@@ -11,11 +11,11 @@ namespace Konamiman.Sjasm.Tests
         }
 
         [Test]
-        public void Returns_exit_code_1_when_executed_without_parameters()
+        public void Returns_exit_code_0_when_executed_without_parameters()
         {
             var result = ExecuteSjasm("");
 
-            Assert.AreEqual(1, result.ExitCode);
+            Assert.AreEqual(0, result.ExitCode);
         }
 
         [Test]

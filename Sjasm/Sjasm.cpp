@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
   char *p;
   int i=1;
 
-  cout << "SjASM Z80 Assembler v0.39g6 - www.xl2s.tk" << endl;
+  cout << "SjASM Z80 Assembler v0.39h - www.xl2s.tk" << endl;
   sourcefilename[0]=destfilename[0]=listfilename[0]=expfilename[0]=0;
   if (argc==1) {
     cout << "Copyright 2006 Sjoerd Mastijn" << endl;
@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
     cout << "  -s        Generate .SYM symbol file\n";
     cout << "  -q        No listing\n";
     cout << "  -i<path>  Includepath\n";
-    exit(1);
+    exit(0);
   }
 
   GetCurrentDirectory(MAX_PATH,zoekpad);
