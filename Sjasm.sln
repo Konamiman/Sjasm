@@ -5,6 +5,11 @@ VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sjasm", "Sjasm\Sjasm.vcxproj", "{F62DEB82-EA5F-4995-85F3-69FFBE6AC80E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A0F5FED6-AB5A-4469-AC40-176F2D821733}"
+	ProjectSection(SolutionItems) = preProject
+		README.txt = README.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86

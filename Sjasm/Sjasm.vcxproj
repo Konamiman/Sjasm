@@ -101,9 +101,6 @@
     <ClCompile Include="sjio.cpp" />
     <ClCompile Include="tables.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="sjasm.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
