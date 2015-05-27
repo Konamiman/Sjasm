@@ -47,6 +47,8 @@ using std::flush;
 #include <string.h>
 #include <ctype.h>
 
+#define errout (useStdError ? cerr : cout)
+
 #define LINEMAX 300
 #define LABMAX 70
 #define LABTABSIZE 32771
@@ -55,6 +57,7 @@ using std::flush;
 
 extern char filename[],*lp,line[],temp[],*tp,pline[],eline[],*bp;
 extern int pass,labelnotfound,nerror,include,running,labellisting,listfile,donotlist,listdata,listmacro;
+extern int useStdError;
 extern int macronummer,lijst,reglenwidth,synerr,symfile;
 extern aint adres,mapadr,gcurlin,lcurlin,curlin,destlen,size,preverror,maxlin,comlin;
 extern FILE *input;

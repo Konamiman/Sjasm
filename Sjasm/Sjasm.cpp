@@ -33,6 +33,7 @@ char destfilename[LINEMAX],listfilename[LINEMAX],expfilename[LINEMAX],sourcefile
 char filename[LINEMAX],*lp,line[LINEMAX],temp[LINEMAX],*tp,pline[LINEMAX*2],eline[LINEMAX*2],*bp;
 
 int pass,labelnotfound,nerror,include=-1,running,labellisting=0,listfile=1,donotlist,listdata,listmacro;
+int useStdError = 0;
 int macronummer,lijst,reglenwidth,synerr=1,symfile=0;
 aint adres,mapadr,gcurlin,lcurlin,curlin,destlen,size=(aint)-1,preverror=(aint)-1,maxlin=0,comlin;
 #ifdef METARM
@@ -97,8 +98,9 @@ void getOptions(char **&argv,int &i) {
       case 's': symfile=1; break;
       case 'l': labellisting=1; break;
       case 'i': dirlstp=new stringlst(p,dirlstp); p=""; break;
+	  case 'e': useStdError = 1; break;
       default:
-        cout << "Unrecognised option: " << c << endl;
+        errout << "Unrecognised option: " << c << endl;
         break;
       }
     } while (*p);
@@ -132,7 +134,7 @@ int main(int argc, char *argv[]) {
   getOptions(argv,i); if (argv[i]) strcpy(expfilename,argv[i++]);
   getOptions(argv,i);
 
-  if (!sourcefilename[0]) { cout << "No inputfile" << endl; exit(1); }
+  if (!sourcefilename[0]) { errout << "No inputfile" << endl; exit(1); }
   if (!destfilename[0]) {
     strcpy(destfilename,sourcefilename);
     if (!(p=strchr(destfilename,'.'))) p=destfilename; else *p=0;

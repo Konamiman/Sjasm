@@ -225,7 +225,7 @@ void labtabcls::dump() {
 void labtabcls::dumpsym() {
   FILE *symfp;
   char lnrs[16],*l;
-  if (!(symfp=fopen(symfilename,"w"))) { cout << "Error opening file: " << symfilename << endl; exit(1); }
+  if (!(symfp=fopen(symfilename,"w"))) { errout << "Error opening file: " << symfilename << endl; exit(1); }
   for (int i=1; i<nextlocation; ++i) {
     if (!isdigit(labtab[i].name[0])) {
       strcpy(eline,labtab[i].name); strcat(eline,": equ "); l=lnrs;
@@ -242,7 +242,7 @@ funtabcls::funtabcls() {
 
 int funtabcls::insert(char *nname, void(*nfunp)(void)) {
   char *p;
-  if (nextlocation>=FUNTABSIZE*2/3) { cout << "funtab full" << endl; exit(1); }
+  if (nextlocation>=FUNTABSIZE*2/3) { errout << "funtab full" << endl; exit(1); }
   int tr,htr;
   tr=hash(nname);
   while(htr=hashtable[tr]) {
@@ -256,7 +256,7 @@ int funtabcls::insert(char *nname, void(*nfunp)(void)) {
 
   strcpy(p=temp,nname); while(*p=(char)toupper(*p)) ++p;
   
-  if (nextlocation>=FUNTABSIZE*2/3) { cout << "funtab full" << endl; exit(1); }
+  if (nextlocation>=FUNTABSIZE*2/3) { errout << "funtab full" << endl; exit(1); }
   tr=hash(temp);
   while(htr=hashtable[tr]) {
     if (!strcmp((funtab[htr].name),temp)) return 0;

@@ -54,7 +54,7 @@ void error(char *fout,char *bd,int soort) {
   if (bd) { strcat(ep,": "); strcat(ep,bd); }
   if (!strchr(ep,'\n')) strcat(ep,"\n");
   if (listfile) fputs(eline,listfp);
-  cout << eline;
+  errout << eline;
   if (soort==FATAL) exit(1);
 }
 
@@ -283,7 +283,7 @@ void BinIncFile(char *fname,int offset,int len) {
   nieuwzoekpad=getpath(fname,NULL);
   if (*fname=='<') fname++;
   if (!(bif=fopen(nieuwzoekpad,"rb"))) {
-    cout << "Error opening file: " << fname << endl; exit(1);
+    errout << "Error opening file: " << fname << endl; exit(1);
   }
   if (offset>0) {
     bp=new char[offset+1];
@@ -325,7 +325,7 @@ void OpenFile(char *nfilename) {
   nieuwzoekpad=getpath(nfilename,&filenamebegin);
   if (*nfilename=='<') nfilename++;
   strcpy(filename,nfilename);
-  if ((input=fopen(nieuwzoekpad,"r"))==NULL) { cout << "Error opening file: " << nfilename << endl; exit(1); }
+  if ((input=fopen(nieuwzoekpad,"r"))==NULL) { errout << "Error opening file: " << nfilename << endl; exit(1); }
   ohuidigzoekpad=huidigzoekpad; *filenamebegin=0; huidigzoekpad=nieuwzoekpad;
   while(running && fgets(line,LINEMAX,input)) {
     ++lcurlin; ++curlin;
@@ -343,7 +343,7 @@ void OpenFile(char *nfilename) {
 void OpenList() {
   if (listfile) 
     if (!(listfp=fopen(listfilename,"w"))) {
-      cout << "Error opening file: " << listfilename << endl; exit(1);
+      errout << "Error opening file: " << listfilename << endl; exit(1);
     }
 }
 
@@ -389,7 +389,7 @@ void OpenDest(int mode) {
   if(mode!=OUTPUT_TRUNCATE && !FileExists(destfilename)) mode=OUTPUT_TRUNCATE;
   if ((output = fopen( destfilename, mode==OUTPUT_TRUNCATE ? "wb" : "r+b" )) == NULL )
   {
-     cout << "Error opening file: " << destfilename << endl; exit(1);
+     errout << "Error opening file: " << destfilename << endl; exit(1);
   }
   if(mode!=OUTPUT_TRUNCATE)
   {
@@ -495,7 +495,7 @@ void WriteExp(char *n, aint v) {
   char lnrs[16],*l=lnrs;
   if (!expfp) {
     if (!(expfp=fopen(expfilename,"w"))) {
-      cout << "Error opening file: " << expfilename << endl; exit(1); }
+      errout << "Error opening file: " << expfilename << endl; exit(1); }
   }
   strcpy(eline,n); strcat(eline,": EQU ");
   printhex32(l,v); *l=0; strcat(eline,lnrs); strcat(eline,"h\n");
