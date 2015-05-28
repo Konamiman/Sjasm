@@ -90,6 +90,7 @@ void InitPass(int p) {
 
 void getOptions(char **&argv,int &i) {
   char *p,c;
+  char ps[2];
   while (argv[i] && *argv[i]=='-') {
     p=argv[i++]+1; 
     do {
@@ -102,11 +103,21 @@ void getOptions(char **&argv,int &i) {
 	  case 'e': useStdError = 1; break;
 	  case 'v': useVsErrorFormat = 1; break;
       default:
-        errout << "Unrecognised option: " << c << endl;
-        exit(ERR_INVALID_OPTION);
+		  ps[0] = c;
+		  ps[1] = '\0';
+		  ErrorAndExit2("Unrecognised option: ", ps, ERR_INVALID_OPTION);
       }
     } while (*p);
   }
+}
+
+void ErrorAndExit2(char* message, char* param, int exitCode) {
+	if (useVsErrorFormat)
+		errout << "sjasm : error FATAL : " << message << param << endl;
+	else {
+		errout << message << param << endl;
+	}
+	exit(exitCode);
 }
 
 int main(int argc, char *argv[]) {
@@ -127,6 +138,7 @@ int main(int argc, char *argv[]) {
     cout << "  -i<path>  Includepath\n";
 	cout << "  -e        Send errors to standard error pipe\n";
 	cout << "  -v        Produce error messages with Visual Studio format\n";
+	cout << "            (should be the first option)\n";
     exit(0);
   }
 
@@ -139,7 +151,7 @@ int main(int argc, char *argv[]) {
   getOptions(argv,i); if (argv[i]) strcpy(expfilename,argv[i++]);
   getOptions(argv,i);
 
-  if (!sourcefilename[0]) { errout << "No inputfile" << endl; exit(ERR_NO_INPUT); }
+  if (!sourcefilename[0]) { ErrorAndExit("No inputfile", ERR_NO_INPUT); }
   if (!destfilename[0]) {
     strcpy(destfilename,sourcefilename);
     if (!(p=strchr(destfilename,'.'))) p=destfilename; else *p=0;

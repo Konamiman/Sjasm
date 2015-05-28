@@ -72,6 +72,10 @@ extern void (*piCPUp)(void);
 extern char destfilename[],listfilename[],sourcefilename[],expfilename[],symfilename[];
 extern char *modlabp,*vorlabp,*macrolabp;
 
+void ErrorAndExit2(char* message, char* param, int exitCode);
+#define ErrorAndExit(message, exitCode) ErrorAndExit2(message, "", exitCode)
+#define ErrorOpeningFile(fname) ErrorAndExit2("Error opening file: ", fname, ERR_OPEN_FILE)
+
 extern FILE *listfp;
 
 #ifdef SECTIONS

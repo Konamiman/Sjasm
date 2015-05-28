@@ -289,7 +289,7 @@ void BinIncFile(char *fname,int offset,int len) {
   nieuwzoekpad=getpath(fname,NULL);
   if (*fname=='<') fname++;
   if (!(bif=fopen(nieuwzoekpad,"rb"))) {
-    errout << "Error opening file: " << fname << endl; exit(ERR_OPEN_FILE);
+	  ErrorOpeningFile(fname);
   }
   if (offset>0) {
     bp=new char[offset+1];
@@ -331,7 +331,7 @@ void OpenFile(char *nfilename) {
   nieuwzoekpad=getpath(nfilename,&filenamebegin);
   if (*nfilename=='<') nfilename++;
   strcpy(filename,nfilename);
-  if ((input=fopen(nieuwzoekpad,"r"))==NULL) { errout << "Error opening file: " << nfilename << endl; exit(ERR_OPEN_FILE); }
+  if ((input=fopen(nieuwzoekpad,"r"))==NULL) { ErrorOpeningFile(nfilename); }
   ohuidigzoekpad=huidigzoekpad; *filenamebegin=0; huidigzoekpad=nieuwzoekpad;
   while(running && fgets(line,LINEMAX,input)) {
     ++lcurlin; ++curlin;
@@ -349,7 +349,7 @@ void OpenFile(char *nfilename) {
 void OpenList() {
   if (listfile) 
     if (!(listfp=fopen(listfilename,"w"))) {
-      errout << "Error opening file: " << listfilename << endl; exit(ERR_OPEN_FILE);
+		ErrorOpeningFile(listfilename);
     }
 }
 
@@ -395,7 +395,7 @@ void OpenDest(int mode) {
   if(mode!=OUTPUT_TRUNCATE && !FileExists(destfilename)) mode=OUTPUT_TRUNCATE;
   if ((output = fopen( destfilename, mode==OUTPUT_TRUNCATE ? "wb" : "r+b" )) == NULL )
   {
-     errout << "Error opening file: " << destfilename << endl; exit(ERR_OPEN_FILE);
+	  ErrorOpeningFile(destfilename);
   }
   if(mode!=OUTPUT_TRUNCATE)
   {
@@ -501,7 +501,8 @@ void WriteExp(char *n, aint v) {
   char lnrs[16],*l=lnrs;
   if (!expfp) {
     if (!(expfp=fopen(expfilename,"w"))) {
-      errout << "Error opening file: " << expfilename << endl; exit(ERR_OPEN_FILE); }
+		ErrorOpeningFile(expfilename);
+	}
   }
   strcpy(eline,n); strcat(eline,": EQU ");
   printhex32(l,v); *l=0; strcat(eline,lnrs); strcat(eline,"h\n");
