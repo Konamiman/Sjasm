@@ -142,8 +142,12 @@ namespace Konamiman.Sjasm.Tests
  ld b,@b
  endm
 
+;Remark
+
  test 1,2
  test 3,4
+
+  ;Remark
 
  macro test2 aa,bb
  ld a,aa
@@ -152,6 +156,19 @@ namespace Konamiman.Sjasm.Tests
 
  test2 5,6
  test2 7,8
+
+test3: macro
+ nop
+ nop
+ endm
+
+ test3
+
+ macro test4
+ halt
+ endm
+
+ test4
 ";
 
             var program2Source =
@@ -162,7 +179,11 @@ namespace Konamiman.Sjasm.Tests
  ld a,5
  ld b,6
  ld a,7
- ld b,8";
+ ld b,8
+ nop
+ nop
+ halt
+ ";
 
             AssertProduceSameCode(program1Source, program2Source);
         }

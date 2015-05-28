@@ -364,12 +364,12 @@ void ReformatCompassStyleMacro(char* line)
 	int labelLength;
 
 	char* lp = line;
-	if(!*lp || *lp<=' ')
+	if (!*lp || *lp <= ' ' || *lp == ';')
 		return;
 
 	labelStart = line;
 	while(*lp && *lp > ' ' && *lp != ':') lp++;
-	if(!*lp)
+	if (!*lp || *lp == ';')
 		return;
 
 	labelEnd = lp;
@@ -389,11 +389,10 @@ void ReformatCompassStyleMacro(char* line)
 
 	lp += 5;
 	while (*lp && *lp <= ' ') ++lp;
-	if (!*lp)
-		return;
-
 	paramsStart = lp;
 	
+	//cout << "!!1 " << paramsStart << endl;
+
 	/* It's a Compass style macro */
 
 	memcpy(temp, labelStart, labelLength);
@@ -409,7 +408,6 @@ void ReformatCompassStyleMacro(char* line)
 
 void ParseLine() {
   char* tempLp;
-
   ReformatCompassStyleMacro(line);
   if(insideCompassStyleMacroDefinition) {
 	  tempLp = line;
