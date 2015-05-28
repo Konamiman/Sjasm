@@ -35,7 +35,8 @@ int ParseExpPrim(char *&p, aint &nval) {
   skipblanks(p);
   if (!*p) { return 0; }
   if (*p=='(') { ++p; res=ParseExpression(p,nval); if (!need(p,')')) { error("')' expected",0); return 0; }  }
-  else if (isdigit(*p) || (*p=='#' && isalnum(*(p+1))) || (*p=='$' && isalnum(*(p+1))) || *p=='%') { res=getConstant(p,nval); }
+  else if (isdigit(*p) || (*p=='#' && isalnum(*(p+1))) || (*p=='$' && isalnum(*(p+1))) || *p=='%' || (*p == '&' && isalnum(*(p + 1)))) 
+	{ res=getConstant(p,nval); }
   else if (isalpha(*p) || *p=='_' || *p=='.' || *p=='@') { res=getLabelValue(p,nval); }
   else if (*p=='$') { ++p; nval=adres; return 1; }
   else if (!(res=getCharConst(p,nval))) { if(synerr) error("Syntax error",p,CATCHALL); return 0; }

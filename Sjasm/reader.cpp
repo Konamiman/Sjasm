@@ -204,6 +204,20 @@ int getConstant(char *&op, aint &val) {
   char *p=op,*p2,*p3;
   skipblanks(p); p3=p;
   val=0;
+  char prefix;
+
+  if (*p == '&') {
+	  p++;
+	  prefix = tolower(*p);
+	  if(prefix != 'h' && prefix != 'b') {
+		  error("Syntax error", op, CATCHALL); return 0;
+	  }
+	  if(prefix == 'h')
+		  *p = '#';
+	  else
+		  *p = '%';
+  }
+
   switch (*p) {
   case '#':
   case '$': 
