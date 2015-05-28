@@ -49,6 +49,12 @@ using std::flush;
 
 #define errout (useStdError ? cerr : cout)
 
+#define ERR_BAD_CODE 1
+#define ERR_OPEN_FILE 2
+#define ERR_FATAL 3
+#define ERR_NO_INPUT 4
+#define ERR_INVALID_OPTION 5
+
 #define LINEMAX 300
 #define LABMAX 70
 #define LABTABSIZE 32771

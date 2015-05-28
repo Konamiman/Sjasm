@@ -101,7 +101,7 @@ void getOptions(char **&argv,int &i) {
 	  case 'e': useStdError = 1; break;
       default:
         errout << "Unrecognised option: " << c << endl;
-        break;
+        exit(ERR_INVALID_OPTION);
       }
     } while (*p);
   }
@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
   getOptions(argv,i); if (argv[i]) strcpy(expfilename,argv[i++]);
   getOptions(argv,i);
 
-  if (!sourcefilename[0]) { errout << "No inputfile" << endl; exit(1); }
+  if (!sourcefilename[0]) { errout << "No inputfile" << endl; exit(ERR_NO_INPUT); }
   if (!destfilename[0]) {
     strcpy(destfilename,sourcefilename);
     if (!(p=strchr(destfilename,'.'))) p=destfilename; else *p=0;

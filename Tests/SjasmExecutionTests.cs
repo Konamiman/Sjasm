@@ -41,5 +41,21 @@ namespace Konamiman.Sjasm.Tests
 
             Assert.True(result.StandardError.Contains("Error"));
         }
+
+        [Test]
+        public void Returns_errorcode_4_if_no_input_file_provider()
+        {
+            var result = ExecuteSjasm("-e");
+
+            Assert.AreEqual(4, result.ExitCode);
+        }
+
+        [Test]
+        public void Returns_errorcode_5_if_unknown_option_specified()
+        {
+            var result = ExecuteSjasm("-x x");
+
+            Assert.AreEqual(5, result.ExitCode);
+        }
     }
 }
