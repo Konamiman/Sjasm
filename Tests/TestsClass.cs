@@ -28,11 +28,11 @@ namespace Konamiman.Sjasm.Tests
             };
         }
 
-        protected AssemblyResult Assemble(string sourceCode, bool throwOnErrors = true)
+        protected AssemblyResult Assemble(string sourceCode, string commandLineOptions="", bool throwOnErrors = true)
         {
             File.WriteAllText("temp.asm", sourceCode);
 
-            var result = ExecuteSjasm("-e temp.asm");
+            var result = ExecuteSjasm($"-e {commandLineOptions} temp.asm");
 
             if(result.ExitCode != 0 && throwOnErrors) {
                 throw new InvalidOperationException(

@@ -29,6 +29,8 @@
 enum _fouten { ALL, PASS1, PASS2, FATAL, CATCHALL, SUPPRES };
 enum Ending { END, ELSE, ENDIF, ENDTEXTAREA, ENDM };
 
+#define str(x) #x
+
 extern aint eadres,epadres;
 
 #define OUTPUT_TRUNCATE 0

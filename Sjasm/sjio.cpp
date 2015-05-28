@@ -40,6 +40,7 @@ FILE *input, *output;
 FILE *listfp,*expfp=NULL;
 aint eadres,epadres,desttel=0,skiperrors=0;;
 char hd[]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+char* errorSorts[] = { "ALL", "PASS1", "PASS2", "FATAL", "CATCHALL", "SUPPRES" };
 
 void error(char *fout,char *bd,int soort) {
   char *ep=eline;
@@ -50,7 +51,12 @@ void error(char *fout,char *bd,int soort) {
   skiperrors=(soort==SUPPRES);
   preverror=lcurlin;
   ++nerror;
-  sprintf(ep,"%s line %lu: %s", filename, lcurlin, fout);
+
+  if(useVsErrorFormat)
+	sprintf(ep, "%s(%lu) : error %s : %s", filename, lcurlin, errorSorts[soort], fout);
+  else
+	sprintf(ep,"%s line %lu: %s", filename, lcurlin, fout);
+  
   if (bd) { strcat(ep,": "); strcat(ep,bd); }
   if (!strchr(ep,'\n')) strcat(ep,"\n");
   if (listfile) fputs(eline,listfp);

@@ -34,6 +34,7 @@ char filename[LINEMAX],*lp,line[LINEMAX],temp[LINEMAX],*tp,pline[LINEMAX*2],elin
 
 int pass,labelnotfound,nerror,include=-1,running,labellisting=0,listfile=1,donotlist,listdata,listmacro;
 int useStdError = 0;
+int useVsErrorFormat = 0;
 int macronummer,lijst,reglenwidth,synerr=1,symfile=0;
 aint adres,mapadr,gcurlin,lcurlin,curlin,destlen,size=(aint)-1,preverror=(aint)-1,maxlin=0,comlin;
 #ifdef METARM
@@ -99,6 +100,7 @@ void getOptions(char **&argv,int &i) {
       case 'l': labellisting=1; break;
       case 'i': dirlstp=new stringlst(p,dirlstp); p=""; break;
 	  case 'e': useStdError = 1; break;
+	  case 'v': useVsErrorFormat = 1; break;
       default:
         errout << "Unrecognised option: " << c << endl;
         exit(ERR_INVALID_OPTION);
@@ -112,16 +114,19 @@ int main(int argc, char *argv[]) {
   char *p;
   int i=1;
 
-  cout << "SjASM Z80 Assembler v0.39h - www.xl2s.tk" << endl;
+  cout << "SjASM Z80 Assembler v0.39h" << endl;
   sourcefilename[0]=destfilename[0]=listfilename[0]=expfilename[0]=0;
   if (argc==1) {
-    cout << "Copyright 2006 Sjoerd Mastijn" << endl;
+    cout << "Copyright 2006 Sjoerd Mastijn - www.xl2s.tk" << endl;
+	cout << "v0.39h by Konamiman - www.konamiman.com" << endl;
     cout << "\nUsage:\nsjasm [-options] sourcefile [targetfile [listfile [exportfile]]]\n";
     cout << "\nOption flags as follows:\n";
     cout << "  -l        Label table in listing\n";
     cout << "  -s        Generate .SYM symbol file\n";
     cout << "  -q        No listing\n";
     cout << "  -i<path>  Includepath\n";
+	cout << "  -e        Send errors to standard error pipe\n";
+	cout << "  -v        Produce error messages with Visual Studio format\n";
     exit(0);
   }
 

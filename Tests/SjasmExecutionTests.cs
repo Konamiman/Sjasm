@@ -46,7 +46,7 @@ namespace Konamiman.Sjasm.Tests
         [Test]
         public void Returns_errorcode_1_if_source_has_errors()
         {
-            var result = Assemble(" dummy", false);
+            var result = Assemble(" dummy", throwOnErrors: false);
 
             Assert.AreEqual(1, result.ExitCode);
             CollectionAssert.IsNotEmpty(result.Errors);
@@ -55,7 +55,7 @@ namespace Konamiman.Sjasm.Tests
         [Test]
         public void Returns_errorcode_2_if_cant_open_file()
         {
-            var result = Assemble(@" incbin""dummy""", false);
+            var result = Assemble(@" incbin""dummy""", throwOnErrors: false);
 
             Assert.AreEqual(2, result.ExitCode);
             CollectionAssert.IsNotEmpty(result.Errors);
@@ -69,7 +69,7 @@ namespace Konamiman.Sjasm.Tests
                 programBuilder.AppendLine($"label{i}: nop");
             var program = programBuilder.ToString();
             
-            var result = Assemble(program, false);
+            var result = Assemble(program, throwOnErrors: false);
 
             Assert.AreEqual(3, result.ExitCode);
             CollectionAssert.IsNotEmpty(result.Errors);
@@ -89,6 +89,27 @@ namespace Konamiman.Sjasm.Tests
             var result = ExecuteSjasm("-x x");
 
             Assert.AreEqual(5, result.ExitCode);
+        }
+
+        [Test]
+        public void Returns_error_messages_in_visual_studio_format_if_v_option_specified()
+        {
+            var result = Assemble(" dummy", "-v", false);
+
+            var errorParts = result.Errors[0].Split(':');
+            Assert.GreaterOrEqual(errorParts.Length, 3);
+            Assert.True(errorParts[0].EndsWith("(1) "));
+            Assert.AreEqual(" error PASS2 ", errorParts[1]);
+        }
+
+        [Test]
+        public void Returns_error_messages_in_non_visual_studio_format_if_v_option_specified()
+        {
+            var result = Assemble(" dummy", throwOnErrors: false);
+
+            var errorParts = result.Errors[0].Split(':');
+            Assert.GreaterOrEqual(errorParts.Length, 2);
+            Assert.True(errorParts[0].EndsWith("line 1"));
         }
     }
 }
