@@ -65,6 +65,15 @@ pooldatacls pooldata;
 pooltabcls pooltab;
 #endif
 
+void ReplaceCharInString(char* string, char from, char to) {
+	char* tempLp = string;
+	while (*tempLp) {
+		if (*tempLp == from)
+			*tempLp = to;
+		tempLp++;
+	}
+}
+
 void InitPass(int p) {
 #ifdef SECTIONS
   section=TEXT;

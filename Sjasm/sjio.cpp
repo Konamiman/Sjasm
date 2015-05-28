@@ -491,12 +491,7 @@ int ReadFileToStringLst(stringlst *&f,char *end) {
     if (strlen(line)==LINEMAX-1) error("Line too long",0,FATAL);
 
 	if (insideCompassStyleMacroDefinition) {
-		tempLp = line;
-		while (*tempLp) {
-			if (*tempLp == '@')
-				*tempLp = '_';
-			tempLp++;
-		}
+		ReplaceCharInString(line, '@', '_');
 	}
 
     if (*p && *p<=' ') {

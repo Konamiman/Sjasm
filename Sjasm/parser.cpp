@@ -413,14 +413,8 @@ void ParseLine() {
   if(compassCompatibilityEnabled)
 	ReformatCompassStyleMacro(line);
 
-  if(insideCompassStyleMacroDefinition) {
-	  tempLp = line;
-	  while (*tempLp) {
-		  if (*tempLp == '@')
-			  *tempLp = '_';
-		  tempLp++;
-	  }
-  }
+  if(insideCompassStyleMacroDefinition)
+	  ReplaceCharInString(line, '@', '_');
   
   ++gcurlin;
   replacedefineteller=comnxtlin=0;
