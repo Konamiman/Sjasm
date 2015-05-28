@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
     cout << "  -i<path>  Includepath\n";
 	cout << "  -e        Send errors to standard error pipe\n";
 	cout << "  -c        Enable Compass compatibility\n";
-	cout << "  -x        Produce error messages with Visual Studio format\n";
+	cout << "  -v        Produce error messages with Visual Studio format\n";
 	cout << "            (should be the first option)\n";
     exit(ERR_NO_INPUT);
   }
