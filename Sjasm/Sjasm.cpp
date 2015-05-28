@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
 	cout << "  -e        Send errors to standard error pipe\n";
 	cout << "  -v        Produce error messages with Visual Studio format\n";
 	cout << "            (should be the first option)\n";
-    exit(0);
+    exit(ERR_NO_INPUT);
   }
 
   GetCurrentDirectory(MAX_PATH,zoekpad);
