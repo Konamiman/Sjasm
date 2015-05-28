@@ -409,7 +409,10 @@ void ReformatCompassStyleMacro(char* line)
 
 void ParseLine() {
   char* tempLp;
-  ReformatCompassStyleMacro(line);
+
+  if(compassCompatibilityEnabled)
+	ReformatCompassStyleMacro(line);
+
   if(insideCompassStyleMacroDefinition) {
 	  tempLp = line;
 	  while (*tempLp) {

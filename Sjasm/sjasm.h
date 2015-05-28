@@ -65,7 +65,7 @@ extern char filename[],*lp,line[],temp[],*tp,pline[],eline[],*bp;
 extern int pass,labelnotfound,nerror,include,running,labellisting,listfile,donotlist,listdata,listmacro;
 extern int useStdError;
 extern int useVsErrorFormat;
-extern int reverseMultiPop;
+extern int compassCompatibilityEnabled;
 extern int insideCompassStyleMacroDefinition;
 extern int macronummer,lijst,reglenwidth,synerr,symfile;
 extern aint adres,mapadr,gcurlin,lcurlin,curlin,destlen,size,preverror,maxlin,comlin;

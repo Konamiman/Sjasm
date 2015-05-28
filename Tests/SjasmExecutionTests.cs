@@ -113,7 +113,7 @@ namespace Konamiman.Sjasm.Tests
         }
 
         [Test]
-        public void Does_not_reverse_multi_POP_if_no_p_option_specified()
+        public void Does_not_reverse_multi_POP_if_no_c_option_specified()
         {
             var program1Source = " pop af,bc,de,hl";
             var program2Source = " pop hl\r\n pop de\r\n pop bc\r\n pop af";
@@ -125,16 +125,24 @@ namespace Konamiman.Sjasm.Tests
         }
 
         [Test]
-        public void Reverses_multi_POP_if_p_option_specified()
+        public void Reverses_multi_POP_if_c_option_specified()
         {
             var program1Source = " pop af,bc,de,hl";
             var program2Source = " pop af\r\n pop bc\r\n pop de\r\n pop hl";
 
-            AssertProduceSameCode(program1Source, program2Source, "-p");
+            AssertProduceSameCode(program1Source, program2Source, "-c");
         }
 
         [Test]
-        public void Can_parse_Compass_macros_and_own_macros_with_parameters()
+        public void Cannot_parse_Compass_macros_and_own_macros_with_parameters_if_c_option_not_specified()
+        {
+            var program1Source = "test: macro @a\r\n endm";
+            var result = Assemble(program1Source, throwOnErrors: false);
+            Assert.AreEqual(1, result.ExitCode);
+        }
+
+        [Test]
+        public void Can_parse_Compass_macros_and_own_macros_with_parameters_if_c_option_specified()
         {
             var program1Source =
  @"test: macro @a,@b
@@ -185,7 +193,7 @@ test3: macro
  halt
  ";
 
-            AssertProduceSameCode(program1Source, program2Source);
+            AssertProduceSameCode(program1Source, program2Source, "-c");
         }
     }
 }

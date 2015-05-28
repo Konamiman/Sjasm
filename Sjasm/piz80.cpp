@@ -1690,7 +1690,7 @@ void pizPOPreversed() {
 }
 
 void pizPOP() {
-	if(reverseMultiPop)
+	if(compassCompatibilityEnabled)
 		pizPOPreversed();
 	else
 		pizPOPoriginal();
