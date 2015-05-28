@@ -242,7 +242,7 @@ funtabcls::funtabcls() {
 
 int funtabcls::insert(char *nname, void(*nfunp)(void)) {
   char *p;
-  if (nextlocation>=FUNTABSIZE*2/3) { errout << "funtab full" << endl; exit(1); }
+  if (nextlocation>=FUNTABSIZE*2/3) { errout << "funtab full" << endl; exit(ERR_FATAL); }
   int tr,htr;
   tr=hash(nname);
   while(htr=hashtable[tr]) {
@@ -256,7 +256,7 @@ int funtabcls::insert(char *nname, void(*nfunp)(void)) {
 
   strcpy(p=temp,nname); while(*p=(char)toupper(*p)) ++p;
   
-  if (nextlocation>=FUNTABSIZE*2/3) { errout << "funtab full" << endl; exit(1); }
+  if (nextlocation>=FUNTABSIZE*2/3) { errout << "funtab full" << endl; exit(ERR_FATAL); }
   tr=hash(temp);
   while(htr=hashtable[tr]) {
     if (!strcmp((funtab[htr].name),temp)) return 0;

@@ -55,7 +55,7 @@ void error(char *fout,char *bd,int soort) {
   if (!strchr(ep,'\n')) strcat(ep,"\n");
   if (listfile) fputs(eline,listfp);
   errout << eline;
-  if (soort==FATAL) exit(1);
+  if (soort==FATAL) exit(ERR_FATAL);
 }
 
 void WriteDest() {
