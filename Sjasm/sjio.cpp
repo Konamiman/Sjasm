@@ -480,6 +480,45 @@ int ReadLine() {
   return 1;
 }
 
+void ConvertCompassStyleLocalLabels(char* line) {
+	//Replaces "label@sym" into ".labelSym"
+
+	char* lp = line;
+	char* atSymPointer;
+	char* labelStartPointer;
+	int labelLength;
+	int i;
+
+	while (*lp) {
+		if (!(*lp == '@' && tolower(lp[1]) == 's' && tolower(lp[2]) == 'y' && tolower(lp[3]) == 'm')) {
+			lp++;
+			continue;
+		}
+
+		atSymPointer = lp;
+		lp--;
+		if(lp < line) return;
+
+		while(lp >= line && IsValidIdChar(*lp))
+			lp--;
+
+		labelStartPointer = lp + 1;
+		labelLength = atSymPointer - labelStartPointer;
+		if (labelLength == 0) {
+			lp = atSymPointer + 4;
+			continue;
+		}
+
+		for (i = labelLength - 1; i >= 0; i--)
+			labelStartPointer[i + 1] = labelStartPointer[i];
+
+		*labelStartPointer = '.';
+		atSymPointer[1] = 'S';
+
+		lp = atSymPointer + 4;
+	}
+}
+
 int ReadFileToStringLst(stringlst *&f,char *end) {
   stringlst *s,*l=NULL;
   char *p; f=NULL;
@@ -491,6 +530,7 @@ int ReadFileToStringLst(stringlst *&f,char *end) {
     if (strlen(line)==LINEMAX-1) error("Line too long",0,FATAL);
 
 	if (insideCompassStyleMacroDefinition) {
+		ConvertCompassStyleLocalLabels(line);
 		ReplaceCharInString(line, '@', '_');
 	}
 

@@ -195,5 +195,33 @@ test3: macro
 
             AssertProduceSameCode(program1Source, program2Source, "-c");
         }
+
+        [Test]
+        public void Supports_local_labels_inside_Compass_style_macros()
+        {
+            var program1Source =
+@"test: macro
+loop@sym: djnz loop@sym
+data@sym: db 0
+ ld hl,data@sym
+ endm
+
+ test
+ test
+ test";
+
+            var program2Source =
+@" macro test
+.loopSym: djnz .loopSym
+.dataSym: db 0
+ ld hl,.dataSym
+ endm
+
+ test
+ test
+ test";
+
+            AssertProduceSameCode(program1Source, program2Source, "-c");
+        }
     }
 }

@@ -119,7 +119,7 @@ char *getid(char *&p) {
   skipblanks(p);
   if (!isalpha(*p) && *p!='_') return 0;
   while(*p) {
-    if (!isalnum(*p) && *p!='_' && *p!='.' && *p!='?' && *p!='!' && *p!='#' && *p!='@') break;
+    if (IsNotValidIdChar(*p)) break;
     *np=*p; ++p; ++np;
   }
   *np=0;

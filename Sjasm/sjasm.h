@@ -80,6 +80,9 @@ void ErrorAndExit2(char* message, char* param, int exitCode);
 #define ErrorAndExit(message, exitCode) ErrorAndExit2(message, "", exitCode)
 #define ErrorOpeningFile(fname) ErrorAndExit2("Error opening file: ", fname, ERR_OPEN_FILE)
 
+#define IsNotValidIdChar(p) (!isalnum(p) && p!='_' && p!='.' && p!='?' && p!='!' && p!='#' && p!='@')
+#define IsValidIdChar(p) (!IsNotValidIdChar(p))
+
 extern FILE *listfp;
 
 #ifdef SECTIONS
