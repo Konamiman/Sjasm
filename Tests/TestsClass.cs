@@ -41,7 +41,7 @@ namespace Konamiman.Sjasm.Tests
 
             return new AssemblyResult
             {
-                AssembledCode = File.Exists("temp.out") ? null : File.ReadAllBytes("temp.out"),
+                AssembledCode = File.Exists("temp.out") ? File.ReadAllBytes("temp.out") : null,
                 ExitCode = result.ExitCode,
                 Errors = result.StandardError.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
             };

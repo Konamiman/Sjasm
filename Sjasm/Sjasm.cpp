@@ -35,6 +35,7 @@ char filename[LINEMAX],*lp,line[LINEMAX],temp[LINEMAX],*tp,pline[LINEMAX*2],elin
 int pass,labelnotfound,nerror,include=-1,running,labellisting=0,listfile=1,donotlist,listdata,listmacro;
 int useStdError = 0;
 int useVsErrorFormat = 0;
+int reverseMultiPop = 0;
 int macronummer,lijst,reglenwidth,synerr=1,symfile=0;
 aint adres,mapadr,gcurlin,lcurlin,curlin,destlen,size=(aint)-1,preverror=(aint)-1,maxlin=0,comlin;
 #ifdef METARM
@@ -101,6 +102,7 @@ void getOptions(char **&argv,int &i) {
       case 'l': labellisting=1; break;
       case 'i': dirlstp=new stringlst(p,dirlstp); p=""; break;
 	  case 'e': useStdError = 1; break;
+	  case 'p': reverseMultiPop = 1; break;
 	  case 'v': useVsErrorFormat = 1; break;
       default:
 		  ps[0] = c;
@@ -137,6 +139,8 @@ int main(int argc, char *argv[]) {
     cout << "  -q        No listing\n";
     cout << "  -i<path>  Includepath\n";
 	cout << "  -e        Send errors to standard error pipe\n";
+	cout << "  -p        Reverse order in multi-POP statements\n";
+	cout << "            (so that POP x,y produces POP x : POP y)\n";
 	cout << "  -v        Produce error messages with Visual Studio format\n";
 	cout << "            (should be the first option)\n";
     exit(ERR_NO_INPUT);

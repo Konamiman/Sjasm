@@ -1653,7 +1653,7 @@ void pizOUTI() {
   EmitBytes(e);
 }
 
-void pizPOP() {
+void pizPOPoriginal() {
   int e[30],t=29,c=1;
   e[t]=-1;
   do {
@@ -1669,6 +1669,31 @@ void pizPOP() {
     if (!comma(lp) || t<2) c=0;
   } while (c);
   EmitBytes(&e[t]);
+}
+
+void pizPOPreversed() {
+	int e[30], t = 0, c = 1;
+	do {
+		switch (getz80reg(lp)) {
+		case Z80_AF: e[t++] = 0xf1; break;
+		case Z80_BC: e[t++] = 0xc1; break;
+		case Z80_DE: e[t++] = 0xd1; break;
+		case Z80_HL: e[t++] = 0xe1; break;
+		case Z80_IX: e[t++] = 0xdd; e[t++] = 0xe1; break;
+		case Z80_IY: e[t++] = 0xfd; e[t++] = 0xe1; break;
+		default: c = 0; break;
+		}
+		if (!comma(lp) || t>27) c = 0;
+	} while (c);
+	e[t] = -1;
+	EmitBytes(e);
+}
+
+void pizPOP() {
+	if(reverseMultiPop)
+		pizPOPreversed();
+	else
+		pizPOPoriginal();
 }
 
 void pizPUSH() {

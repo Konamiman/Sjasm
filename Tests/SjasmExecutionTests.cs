@@ -78,7 +78,7 @@ namespace Konamiman.Sjasm.Tests
         [Test]
         public void Returns_errorcode_4_if_no_input_file_provider()
         {
-            var result = ExecuteSjasm("-e");
+            var result = ExecuteSjasm("");
 
             Assert.AreEqual(4, result.ExitCode);
         }
@@ -110,6 +110,30 @@ namespace Konamiman.Sjasm.Tests
             var errorParts = result.Errors[0].Split(':');
             Assert.GreaterOrEqual(errorParts.Length, 2);
             Assert.True(errorParts[0].EndsWith("line 1"));
+        }
+
+        [Test]
+        public void Does_not_reverse_multi_POP_if_no_p_option_specified()
+        {
+            var program1Source = " pop af,bc,de,hl";
+            var program2Source = " pop hl\r\n pop de\r\n pop bc\r\n pop af";
+
+            var program1 = Assemble(program1Source).AssembledCode;
+            var program2 = Assemble(program2Source).AssembledCode;
+
+            CollectionAssert.AreEqual(program2, program1);
+        }
+
+        [Test]
+        public void Reverses_multi_POP_if_p_option_specified()
+        {
+            var program1Source = " pop af,bc,de,hl";
+            var program2Source = " pop af\r\n pop bc\r\n pop de\r\n pop hl";
+
+            var program1 = Assemble(program1Source, "-p").AssembledCode;
+            var program2 = Assemble(program2Source).AssembledCode;
+
+            CollectionAssert.AreEqual(program2, program1);
         }
     }
 }
