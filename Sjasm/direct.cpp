@@ -583,6 +583,7 @@ void dirMACRO() {
 }
 
 void dirENDM() {
+  insideCompassStyleMacroDefinition = 0;
   error("End macro without macro",0);
 }
 
@@ -650,6 +651,7 @@ void dirREPT() {
   if ((int)val<0) { error("Illegal repeat value",0,CATCHALL); return; }
   ListFile();
   if (!ReadFileToStringLst(f,"endm")) error("Unexpected end of repeat",0,PASS1);
+  insideCompassStyleMacroDefinition = 0;
   ListFile();
   olistmacro=listmacro; listmacro=1; ml=strdup(line);
   while (val--) { s=f; while (s) { strcpy(line,s->string); s=s->next; ParseLine(); } }

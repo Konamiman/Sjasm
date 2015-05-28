@@ -440,6 +440,8 @@ void macrotabcls::add(char *nnaam,char *&p) {
   if (*p) error("Unexpected",p,PASS1);
   ListFile();
   if (!ReadFileToStringLst(macs->body,"endm")) error("Unexpected end of macro",0,PASS1);
+  
+  insideCompassStyleMacroDefinition = 0;
 }
 
 int macrotabcls::emit(char *naam, char *&p) {

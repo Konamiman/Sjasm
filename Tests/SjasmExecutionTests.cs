@@ -130,10 +130,41 @@ namespace Konamiman.Sjasm.Tests
             var program1Source = " pop af,bc,de,hl";
             var program2Source = " pop af\r\n pop bc\r\n pop de\r\n pop hl";
 
-            var program1 = Assemble(program1Source, "-p").AssembledCode;
-            var program2 = Assemble(program2Source).AssembledCode;
+            AssertProduceSameCode(program1Source, program2Source, "-p");
+        }
 
-            CollectionAssert.AreEqual(program2, program1);
+        [Test]
+        public void Can_parse_Compass_macros_and_own_macros_with_parameters()
+        {
+            var program1Source =
+ @"test: macro @a,@b
+ ld a,@a
+ ld b,@b
+ endm
+
+ test 1,2
+ test 3,4
+
+ macro test2 aa,bb
+ ld a,aa
+ ld b,bb
+ endm
+
+ test2 5,6
+ test2 7,8
+";
+
+            var program2Source =
+                @" ld a,1
+ ld b,2
+ ld a,3
+ ld b,4
+ ld a,5
+ ld b,6
+ ld a,7
+ ld b,8";
+
+            AssertProduceSameCode(program1Source, program2Source);
         }
     }
 }

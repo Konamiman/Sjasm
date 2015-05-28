@@ -66,6 +66,7 @@ extern int pass,labelnotfound,nerror,include,running,labellisting,listfile,donot
 extern int useStdError;
 extern int useVsErrorFormat;
 extern int reverseMultiPop;
+extern int insideCompassStyleMacroDefinition;
 extern int macronummer,lijst,reglenwidth,synerr,symfile;
 extern aint adres,mapadr,gcurlin,lcurlin,curlin,destlen,size,preverror,maxlin,comlin;
 extern FILE *input;

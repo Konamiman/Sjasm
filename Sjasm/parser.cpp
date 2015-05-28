@@ -353,10 +353,76 @@ void ParseInstruction() {
 #endif
 }
 
+int insideCompassStyleMacroDefinition = 0;
+
+void ReformatCompassStyleMacro(char* line)
+{
+	char* labelStart;
+	char* labelEnd;
+	char* paramsStart;
+	int i;
+	int labelLength;
+
+	char* lp = line;
+	if(!*lp || *lp<=' ')
+		return;
+
+	labelStart = line;
+	while(*lp && *lp > ' ' && *lp != ':') lp++;
+	if(!*lp)
+		return;
+
+	labelEnd = lp;
+	labelLength = labelEnd - labelStart;
+
+	while (*lp == ':') lp++;
+	while (*lp && *lp <= ' ') ++lp;
+	if (!*lp)
+		return;
+
+	if (tolower(lp[0]) != 'm') return;
+	if (tolower(lp[1]) != 'a') return;
+	if (tolower(lp[2]) != 'c') return;
+	if (tolower(lp[3]) != 'r') return;
+	if (tolower(lp[4]) != 'o') return;
+	if (lp[5] > ' ') return;;
+
+	lp += 5;
+	while (*lp && *lp <= ' ') ++lp;
+	if (!*lp)
+		return;
+
+	paramsStart = lp;
+	
+	/* It's a Compass style macro */
+
+	memcpy(temp, labelStart, labelLength);
+	temp[labelLength] = '\0';
+
+	strcpy(line, " macro ");
+	strcpy(line + 7, temp);
+	line[7 + labelLength] = ' ';
+	strcpy(line + 7 + labelLength + 1, paramsStart);
+
+	insideCompassStyleMacroDefinition = 1;
+}
+
 void ParseLine() {
+  char* tempLp;
+
+  ReformatCompassStyleMacro(line);
+  if(insideCompassStyleMacroDefinition) {
+	  tempLp = line;
+	  while (*tempLp) {
+		  if (*tempLp == '@')
+			  *tempLp = '_';
+		  tempLp++;
+	  }
+  }
+  
   ++gcurlin;
   replacedefineteller=comnxtlin=0;
-  lp=ReplaceDefine(line);
+  lp = ReplaceDefine(line);
   if (comlin) { comlin+=comnxtlin; ListFileSkip(line); return; }
   comlin+=comnxtlin; if (!*lp) { ListFile(); return; }
   ParseLabel(); if (skipblanks()) { ListFile(); return; }

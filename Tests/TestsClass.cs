@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using NUnit.Framework;
 
 namespace Konamiman.Sjasm.Tests
 {
@@ -45,6 +46,18 @@ namespace Konamiman.Sjasm.Tests
                 ExitCode = result.ExitCode,
                 Errors = result.StandardError.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
             };
+        }
+
+        protected void AssertProduceSameCode(
+            string program1Source,
+            string program2Source, 
+            string program1Options = "", 
+            string program2Options = "")
+        {
+            var program1 = Assemble(program1Source, program1Options).AssembledCode;
+            var program2 = Assemble(program2Source, program2Options).AssembledCode;
+
+            CollectionAssert.AreEqual(program2, program1);
         }
     }
 

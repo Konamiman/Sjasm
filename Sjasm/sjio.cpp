@@ -483,11 +483,22 @@ int ReadLine() {
 int ReadFileToStringLst(stringlst *&f,char *end) {
   stringlst *s,*l=NULL;
   char *p; f=NULL;
+  char* tempLp;
   while ('o') {
     if (!running) return 0;
     if (!fgets(p=line,LINEMAX,input)) error("Unexpected end of file",0,FATAL);
     ++lcurlin; ++curlin;
     if (strlen(line)==LINEMAX-1) error("Line too long",0,FATAL);
+
+	if (insideCompassStyleMacroDefinition) {
+		tempLp = line;
+		while (*tempLp) {
+			if (*tempLp == '@')
+				*tempLp = '_';
+			tempLp++;
+		}
+	}
+
     if (*p && *p<=' ') {
       skipblanks(p); if (*p=='.') ++p;
       if (cmphstr(p,end)) { return 1; }
