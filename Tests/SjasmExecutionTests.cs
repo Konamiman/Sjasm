@@ -145,13 +145,13 @@ namespace Konamiman.Sjasm.Tests
 ;Remark
 
  test 1,2
- test 3,4
+ test 3,4 ;Uh!
 
   ;Remark
 
  macro test2 aa,bb
  ld a,aa
- ld b,bb
+ ld b,bb ;Oh!
  endm
 
  test2 5,6
@@ -172,7 +172,7 @@ test3: macro
 ";
 
             var program2Source =
-                @" ld a,1
+@" ld a,1
  ld b,2
  ld a,3
  ld b,4
