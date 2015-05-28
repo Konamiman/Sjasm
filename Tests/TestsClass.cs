@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace Konamiman.Sjasm.Tests
 {
@@ -25,5 +27,31 @@ namespace Konamiman.Sjasm.Tests
                 StandardOutput = proc.StandardOutput.ReadToEnd()
             };
         }
+
+        protected AssemblyResult Assemble(string sourceCode, bool throwOnErrors = true)
+        {
+            File.WriteAllText("temp.asm", sourceCode);
+
+            var result = ExecuteSjasm("-e temp.asm");
+
+            if(result.ExitCode != 0 && throwOnErrors) {
+                throw new InvalidOperationException(
+                    $"Assembly failed with error code {result.ExitCode}:\r\n\r\n{result.StandardError}");
+            }
+
+            return new AssemblyResult
+            {
+                AssembledCode = File.Exists("temp.out") ? null : File.ReadAllBytes("temp.out"),
+                ExitCode = result.ExitCode,
+                Errors = result.StandardError.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
+            };
+        }
+    }
+
+    public class AssemblyResult
+    {
+        public byte[] AssembledCode { get; set; }
+        public int ExitCode { get; set; }
+        public string[] Errors { get; set; }
     }
 }

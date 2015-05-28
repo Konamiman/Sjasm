@@ -175,6 +175,6 @@ int main(int argc, char *argv[]) {
 
   cout << "Errors: " << nerror << endl << flush;
 
-  return (nerror!=0);
+  return (nerror==0 ? 0 : ERR_BAD_CODE);
 }
 //eof sjasm.cpp

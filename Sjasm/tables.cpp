@@ -225,7 +225,7 @@ void labtabcls::dump() {
 void labtabcls::dumpsym() {
   FILE *symfp;
   char lnrs[16],*l;
-  if (!(symfp=fopen(symfilename,"w"))) { errout << "Error opening file: " << symfilename << endl; exit(1); }
+  if (!(symfp=fopen(symfilename,"w"))) { errout << "Error opening file: " << symfilename << endl; exit(ERR_OPEN_FILE); }
   for (int i=1; i<nextlocation; ++i) {
     if (!isdigit(labtab[i].name[0])) {
       strcpy(eline,labtab[i].name); strcat(eline,": equ "); l=lnrs;

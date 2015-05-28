@@ -57,5 +57,23 @@ namespace Konamiman.Sjasm.Tests
 
             Assert.AreEqual(5, result.ExitCode);
         }
+
+        [Test]
+        public void Returns_errorcode_1_if_source_has_errors()
+        {
+            var result = Assemble(" dummy", false);
+
+            Assert.AreEqual(1, result.ExitCode);
+            CollectionAssert.IsNotEmpty(result.Errors);
+        }
+
+        [Test]
+        public void Returns_errorcode_2_if_cant_open_file()
+        {
+            var result = Assemble(@" incbin""dummy""", false);
+
+            Assert.AreEqual(2, result.ExitCode);
+            CollectionAssert.IsNotEmpty(result.Errors);
+        }
     }
 }
