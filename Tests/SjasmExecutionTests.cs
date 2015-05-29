@@ -136,9 +136,7 @@ namespace Konamiman.Sjasm.Tests
         [Test]
         public void Cannot_parse_Compass_macros_and_own_macros_with_parameters_if_c_option_not_specified()
         {
-            var program1Source = "test: macro @a\r\n endm";
-            var result = Assemble(program1Source, throwOnErrors: false);
-            Assert.AreEqual(1, result.ExitCode);
+            AssertDoesNotCompile("test: macro @a\r\n endm");
         }
 
         [Test]
@@ -222,6 +220,53 @@ data@sym: db 0
  test";
 
             AssertProduceSameCode(program1Source, program2Source, "-c");
+        }
+
+        [Test]
+        public void Accepts_empty_string_as_zero_if_c_option_specified()
+        {
+            var program1Source = " ld a,\"\"\r\n ld b,''";
+            var program2Source = " ld a,0\r\n ld b,0";
+
+            AssertProduceSameCode(program1Source, program2Source, "-c");
+        }
+
+        [Test]
+        public void Does_not_accept_empty_string_as_zero_if_c_option_not_specified()
+        {
+            AssertDoesNotCompile(" ld a,\"\"");
+            AssertDoesNotCompile(" ld a,''");
+        }
+
+        [Test]
+        public void Accepts_spaces_in_numeric_constants_if_c_option_specified()
+        {
+            var program1Source =
+@" ld a,% 11 00 11 00 ;!
+ ld a,11 00 11 00 b ;!
+ ld a,&b 11 00 11 00 ;!
+ ld bc,&h AA BB ;!
+ ld bc,0 AA BB h ;!
+ ld bc,0x AA BB ;!
+ ld de,12 34 ;!
+";
+            var program2Source = 
+@" ld a,%11001100
+ ld a,11001100b
+ ld a,&b11001100
+ ld bc,&hAABB
+ ld bc,0AABBh
+ ld bc,0xAABB
+ ld de,1234
+";
+
+            AssertProduceSameCode(program1Source, program2Source, "-c");
+        }
+
+        [Test]
+        public void Does_not_accept_spaces_in_numeric_constants_if_c_option_not_specified()
+        {
+            AssertDoesNotCompile(" ld a,%11 00 11 00");
         }
     }
 }

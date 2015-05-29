@@ -199,6 +199,10 @@ int getval(int p) {
   }
 }
 
+int isValidSpaceInsideConstant(char c) {
+	return compassCompatibilityEnabled && (c == ' ' || c == '\t');
+}
+
 int getConstant(char *&op, aint &val) {
   aint base,pb=1,v,oval;
   char *p=op,*p2,*p3;
@@ -222,7 +226,11 @@ int getConstant(char *&op, aint &val) {
   case '#':
   case '$': 
     ++p;
-    while (isalnum(*p)) {
+    while (isalnum(*p) || isValidSpaceInsideConstant(*p)) {
+		if (isValidSpaceInsideConstant(*p)) {
+			p++;
+			continue;
+		}
       if ((v=getval(*p))>=16) { error("Digit not in base",op); return 0; }
       oval=val; val=val*16+v; ++p; if (oval>val) error("Overflow",0,SUPPRES);
     }
@@ -230,9 +238,13 @@ int getConstant(char *&op, aint &val) {
     op=p; return 1;
   case '%':
     ++p;
-    while (isdigit(*p)) {
-      if ((v=getval(*p))>=2) { error("Digit not in base",op); return 0; }
-      oval=val; val=val*2+v; ++p; if (oval>val) error("Overflow",0,SUPPRES);
+    while (isdigit(*p) || isValidSpaceInsideConstant(*p)) {
+	  if (isValidSpaceInsideConstant(*p)) {
+		p++;
+		continue;
+	  }
+    if ((v=getval(*p))>=2) { error("Digit not in base",op); return 0; }
+    oval=val; val=val*2+v; ++p; if (oval>val) error("Overflow",0,SUPPRES);
     }
     if (p-p3<2) { error("Syntax error",op,CATCHALL); return 0; }
     op=p; return 1;
@@ -240,7 +252,11 @@ int getConstant(char *&op, aint &val) {
     ++p;
     if (*p=='x' || *p=='X') {
       ++p;
-      while (isalnum(*p)) {
+      while (isalnum(*p) || isValidSpaceInsideConstant(*p)) {
+		  if (isValidSpaceInsideConstant(*p)) {
+			  p++;
+			  continue;
+		  }
         if ((v=getval(*p))>=16) { error("Digit not in base",op); return 0; }
         oval=val; val=val*16+v; ++p; if (oval>val) error("Overflow",0,SUPPRES);
       }
@@ -248,8 +264,11 @@ int getConstant(char *&op, aint &val) {
       op=p; return 1;
     }
   default:
-    while(isalnum(*p)) ++p;
+    while(isalnum(*p) || isValidSpaceInsideConstant(*p)) ++p;
     p2=p--;
+	
+	while(isValidSpaceInsideConstant(*p)) p--;
+
     if (isdigit(*p)) base=10;
     else if (*p=='b') { base=2; --p; }
     else if (*p=='h') { base=16; --p; }
@@ -263,7 +282,8 @@ int getConstant(char *&op, aint &val) {
     else if (*p=='D') { base=10; --p; }
     else return 0;
     do {
-      if ((v=getval(*p))>=base) { error("Digit not in base",op); return 0; }
+	  if (isValidSpaceInsideConstant(*p)) continue;
+	  if ((v=getval(*p))>=base) { error("Digit not in base",op); return 0; }
       oval=val; val+=v*pb; if (oval>val) error("Overflow",0,SUPPRES);
       pb*=base;
     } while (p--!=p3);
@@ -295,6 +315,11 @@ int getCharConst(char *&p, aint &val) {
   aint s=24,r,t=0; val=0;
   char *op=p,q;
   if (*p!='\'' && *p!='"') return 0;
+  if (compassCompatibilityEnabled && ((p[0] == '"' && p[1] == '"') || (p[0] == '\'' && p[1] == '\''))) {
+	  val = 0;
+	  p += 2;
+	  return 1;
+  }
   q=*p++;
   do {
     if (!*p || *p==q) { p=op; return 0; }

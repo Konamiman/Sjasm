@@ -59,6 +59,12 @@ namespace Konamiman.Sjasm.Tests
 
             CollectionAssert.AreEqual(program2, program1);
         }
+
+        protected void AssertDoesNotCompile(string source)
+        {
+            var result = Assemble(source, throwOnErrors: false);
+            Assert.AreEqual(1, result.ExitCode);
+        }
     }
 
     public class AssemblyResult
