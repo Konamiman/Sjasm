@@ -7,28 +7,31 @@ O   O    O O   O O   O O   O
  OOO  O  O O   O  OOO  O   O
        OO
 
-SjASM Z80 Assembler v0.39h
+Sjasm Z80 Assembler v0.39h
 Copyright 2006 Sjoerd Mastijn - www.xl2s.tk - sjasm@xl2s.tk
 Copyright 2015 Konamiman - www.konamiman.com
 
 
 Introduction
 ============
-SjASM version 0.3 is just yet another Z80 cross assembler.
-Thanks to Eli-Jean Leyssens there is also a Linux version of SjASM.
+Sjasm version 0.3 is just yet another Z80 cross assembler.
+Thanks to Eli-Jean Leyssens there is also a Linux version of Sjasm.
 
 From Konamiman:
-I decided to continue the development of Sjasm because I needed it to assemble Compass sources. Also, I thought that it was a pity that such a great project was not in a proper source code repository.
+I decided to continue the development of Sjasm mainly for two reasons: I thought that it was a pity that such a great project was not in a proper source code repository, and I actually needed it to assemble Compass sources for one of my projects. I went for the 0.39 version instead of 0.42 because it works well enough and has the multiple PUSH and POP statements implemented already.
+
+A big thank you to Sjoerd Mastijn for his awesome work. Enjoy!
 
 DISCLAIMER
 ----------
-If SjASM breaks anything - I didn't do it.
+If Sjasm breaks anything - I didn't do it.
 
-From Konamiman: Me neither!
+From Konamiman: Me neither! (For more details, please read the license file)
+
 
 Changes from 0.2
 ----------------
-- SjASM v0.3x assumes Z80-mode as there are no other cpus supported.
+- Sjasm v0.3x assumes Z80-mode as there are no other cpus supported.
 - All calculations are 32 bits.
  
 Changes from 0.30
@@ -46,13 +49,13 @@ Changes from 0.30
 - '#' Can be used in labels.
 - No space needed between label and '=' in statements like 'label=value'.
 - The 'export' directive now exports 'label: EQU value' instead of 'label = value'.
-- Labelnames starting with a register name (like HL_kip) shouldn't confuse SjASM anymore.
+- Labelnames starting with a register name (like HL_kip) shouldn't confuse Sjasm anymore.
 - RLC, RRC, RL, RR, SLA, SRA, SLL (SLI), RES and SET undocumented instructions added.
 - "ex af,af" and "ex af" are possible now.
 - Added defb, defw and defs.
 - Locallabels now also work correctly when used in macros.
 - Added // and limited /* */ comments.
-- SjASM now checks the label values between passes.
+- Sjasm now checks the label values between passes.
 - '>>>' Operator added.
 - Sources included.
 - '>>>' And '>>' operators now work the way they should (I think).
@@ -66,7 +69,7 @@ Changes from 0.30
 - Fixed a structure initialization bug.
 - It's not possible to use CALLs or jumps without arguments anymore.
 - DZ and ABYTEZ directives to define null terminated strings.
-- SjASM now checks for lines that are too long.
+- Sjasm now checks for lines that are too long.
 - Added '16 bit' LD, LDI and LDD 'instructions'. (See end of this text:)
 - PUSH and POP accept a list of registers.
 - Added '16 bit SUB' instruction.
@@ -85,14 +88,14 @@ New in 0.39g:
 - Some bug fixes:
  - file size is reset when a new output file is opened.
  - 'bytes lost' warning fixed.
-And thanks to Konami Man:
+And thanks to Konamiman:
 - PHASE and DEPHASE directives as synonyms of TEXTAREA and ENDT.
 - FPOS directive.
 - Expanded OUTPUT directive.
 - The possibility to generate a symbol file.
 
 New in 0.39g1:
-- SjASM now allows spaces in filenames.
+- Sjasm now allows spaces in filenames.
 
 New in 0.39g6:
 - : Operator.
@@ -113,20 +116,22 @@ Known bugs:
 - The listfile doesn't always look that good.
 - Commas in strings in macroarguments are not ignored.
 - Sourcelines are not further processed after an ELSE, ENDwhatever and the like.
-- Using INCLUDE instead of INCBIN isn't detected, and will crash SjASM quite nicely.
-- The combination of comments, strings and the af' register can be very confusing for SjASM :)
+- Using INCLUDE instead of INCBIN isn't detected, and will crash Sjasm quite nicely.
+- The combination of comments, strings and the af' register can be very confusing for Sjasm :)
 
 Files
 -----
-The SjASM package consists of the following files:
+The Sjasm package consists of the following files:
 sjasm.exe     - the Win32 executable.
 sjasm.txt     - this file.
+license.txt   - the license file.
 
 Sorry, no Linux executable for v0.39h (but you can generate one from the sources, the original Makefile is included)
 
+
 RUN!
 ====
-To use SjASM:
+To use Sjasm:
 
 sjasm [options] inputfile [outputfile [listfile [exportfile]]]
 
@@ -186,6 +191,7 @@ All fields are optional. Lines without label should start with whitespace. Comme
  ld /*
  but this won't be ld a,3!
  */ a,3
+
 
 Labels
 ======
@@ -252,6 +258,7 @@ Example:
   OUT (152),A
   DJNZ 2B
 
+
 Constants
 =========
 
@@ -300,9 +307,10 @@ Examples:
 
 In Compass compatibility mode the special constants "" and '' are recognized as being equal to zero.
 
+
 Expressions
 ===========
-Expressions are evaluated in 32 bits in this version of SjASM. '$' Represents the current program counter. It is possible to use parenthesis '(' and ')' to override the precedence of the operators. The following operators may be used in expressions:
+Expressions are evaluated in 32 bits in this version of Sjasm. '$' Represents the current program counter. It is possible to use parenthesis '(' and ')' to override the precedence of the operators. The following operators may be used in expressions:
 
 !     !x       logical not
 ~     ~x       complement
@@ -370,6 +378,7 @@ This version only accepts Z80 mnemonics. There are some additions to what I thin
 - PUSH and POP can take register lists:
     PUSH AF,BC  ; push af / push bc
     POP  AF,BC  ; pop  bc / pop  af <- reversed order
+
 
 Pseudo-ops
 ==========
@@ -630,7 +639,7 @@ Example:
   END
 
 This will create two files: loader.com and bigfile.dat.
-When SjASM is invoked without specifying an output file, there is still one created even when no bytes are output to it. So when the above file is called bigfile.asm, and assembled with the following line:
+When Sjasm is invoked without specifying an output file, there is still one created even when no bytes are output to it. So when the above file is called bigfile.asm, and assembled with the following line:
 sjasm bigfile.asm
 The following files are created:
 Bigfile.out  ; file length is zero
@@ -737,8 +746,8 @@ ENDIF
 Every IF should be followed by an ENDIF.
 
 
-Macro's
-=======
+Macros
+======
 The MACRO pseudo-op defines a macro. It should be followed by the name of the macro, optionally followed by the parameters. The following lines will be stored as the macro-body until an ENDM pseudo-op is encountered. Macro's have to be defined before their use.
 
 See also "Compass compatibility mode" to see the Compass format for macros.
@@ -807,6 +816,7 @@ Expands to:
   UseLess <"Kip!!",3>
 Expands to:
   DB "Kip!",3
+
 
 Structures
 ==========
@@ -940,7 +950,7 @@ If this is absolutely necessary (why?) use something like this:
 "Extended instructions"
 =======================
 
-Of course the Z80 is only an 8 bit cpu, but sometimes ld hl,de would be nice. SjASM now 'fakes' some instructions like that. This improves the readability of the source, but it might not be the fastest way to get the result. Also possibly some 'new' load instructions do affect the flags in ways you wouldn't expect.
+Of course the Z80 is only an 8 bit cpu, but sometimes ld hl,de would be nice. Sjasm now 'fakes' some instructions like that. This improves the readability of the source, but it might not be the fastest way to get the result. Also possibly some 'new' load instructions do affect the flags in ways you wouldn't expect.
 Anyway, here's the list:
 
   rl bc
@@ -1197,4 +1207,4 @@ loop@sym:
 
 
 =====
-<EOF> SjASM v0.3
+<EOF> Sjasm v0.3
