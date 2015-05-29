@@ -257,7 +257,7 @@ Constants
 
 Numeric constants
 -----------------
-Numeric constants should always start with a digit or $, # or %. The following formats are supported:
+Numeric constants should always start with a digit or $, #, & or %. The following formats are supported:
 12     decimal
 12d    decimal
 0ch    hexadecimal
@@ -1190,10 +1190,10 @@ For reference, here's the syntax of Compass-style macros:
 
 name: macro @param1,@param2
       ld hl,@param1
-	  ld b,@param2
+      ld b,@param2
 loop@sym:
       djnz loop@sym
-	  endm
+      endm
 
 
 =====
