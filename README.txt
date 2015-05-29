@@ -7,19 +7,24 @@ O   O    O O   O O   O O   O
  OOO  O  O O   O  OOO  O   O
        OO
 
-SjASM Z80 Assembler v0.39g6
-Copyright 2006 Sjoerd Mastijn
+SjASM Z80 Assembler v0.39h
+Copyright 2006 Sjoerd Mastijn - www.xl2s.tk - sjasm@xl2s.tk
+Copyright 2015 Konamiman - www.konamiman.com
 
-www.xl2s.tk - sjasm@xl2s.tk
 
 Introduction
 ============
 SjASM version 0.3 is just yet another Z80 cross assembler.
 Thanks to Eli-Jean Leyssens there is also a Linux version of SjASM.
 
+From Konamiman:
+I decided to continue the development of Sjasm because I needed it to assemble Compass sources. Also, I thought that it was a pity that such a great project was not in a proper source code repository.
+
 DISCLAIMER
 ----------
 If SjASM breaks anything - I didn't do it.
+
+From Konamiman: Me neither!
 
 Changes from 0.2
 ----------------
@@ -95,6 +100,14 @@ New in 0.39g6:
 - Labels starting with an underscore are listed.
 - Can't remember the other changes.
 
+New in 0.39h (by Konamiman):
+----------------------------
+- Added the -e command line switch to send error messages to the standard error pipe.
+- Added the -v command line switch to generate error messages in Visual Studio format.
+- Added the Compass compatibility mode (-c command line switch). See "Compass compatibility mode".
+- Added different exit codes for different error conditions. See "Exit codes".
+- &H and &B can be used as prefixes for hexadecimal and binary constants respectively.
+
 Known bugs:
 -----------
 - The listfile doesn't always look that good.
@@ -107,9 +120,9 @@ Files
 -----
 The SjASM package consists of the following files:
 sjasm.exe     - the Win32 executable.
-sjasm         - the Debian Linux executable.
 sjasm.txt     - this file.
-sjasmsrc039g6 - the sources (directory).
+
+Sorry, no Linux executable for v0.39h (but you can generate one from the sources, the original Makefile is included)
 
 RUN!
 ====
@@ -118,10 +131,13 @@ To use SjASM:
 sjasm [options] inputfile [outputfile [listfile [exportfile]]]
 
 Options:
--L  output a list of all defined labels in the listing
--Q  do not list the source and resulting objectcode in listfile
--I  specify a directory to search for includefiles
+-L  output a list of all defined labels in the listing.
+-Q  do not list the source and resulting objectcode in listfile.
+-I  specify a directory to search for includefiles.
 -S  output a .SYM symbolfile which contains all labels.
+-E  send error messages to the standard error pipe, instead of the standard output pipe.
+-V  produce error messages in Visual Studio format.
+-C  enable compatibility with Compass.
 
 Options may be grouped, and it's permitted to place them anywhere. Examples:
 
@@ -139,7 +155,20 @@ Outputfile: inputfile-without-extension.out
 Listfile: inputfile-without-extension.lst
 Exportfile: inputfile-without-extension.exp
 
-The symbolfile filenaam will always constructed as follows: exportfile-without-extension.sym
+The symbols file name will always constructed as follows: exportfile-without-extension.sym
+
+Exit codes
+----------
+
+Sjasm will terminate with one of the following exit codes:
+
+0: Success
+1: Error(s) found in source code
+2: Can't open or read file
+3: Fatal error (internal error or can't write file)
+4: No input file specified
+5: Invalid command line argument(s)
+
 
 Source file format
 ==================
@@ -235,8 +264,10 @@ Numeric constants should always start with a digit or $, # or %. The following f
 0xc    hexadecimal
 $c     hexadecimal
 #c     hexadecimal
+&hc    hexadecimal
 1100b  binary
 %1100  binary
+&b1100 binary
 14q    octal
 14o    octal
 
@@ -266,6 +297,8 @@ Examples:
   LD A,'\E'
   LD A,'"'
   LD A,"'"
+
+In Compass compatibility mode the special constants "" and '' are recognized as being equal to zero.
 
 Expressions
 ===========
@@ -663,6 +696,10 @@ Conditional assembly
 
 It may be useful to assemble a part or not based on a certain condition.
 
+COND <expression>
+----
+Same as IF, but only works with Compass compatibility enabled.
+
 IF <expression>
 --
 If <expression> is non-zero the following lines are assembled until an ELSE or ENDIF.
@@ -691,6 +728,10 @@ ELSE
 ----
 See IF. If the condition is not true, the else-part is assembled.
 
+ENDC
+----
+Same as ENDIF, but only works with Compass compatibility enabled.
+
 ENDIF
 -----
 Every IF should be followed by an ENDIF.
@@ -699,6 +740,8 @@ Every IF should be followed by an ENDIF.
 Macro's
 =======
 The MACRO pseudo-op defines a macro. It should be followed by the name of the macro, optionally followed by the parameters. The following lines will be stored as the macro-body until an ENDM pseudo-op is encountered. Macro's have to be defined before their use.
+
+See also "Compass compatibility mode" to see the Compass format for macros.
 
 Macro without parameters:
   MACRO ADD_HL_A
@@ -1103,6 +1146,54 @@ Anyway, here's the list:
   sub hl,sp
 
 ldi increases the data pointer after the data access, so LDI A,(HL) is the same as LD A,(HL)\ INC HL. likewise, LDD A,(DE) is LD A,(DE)\ DEC DE.
+
+
+Compass compatibility mode
+==========================
+
+When ran with the -c command line switch Sjasm will enable the Compass compatibility mode. This mode is intended to allow the assembly of source code designed for the Compass assembler. Not all the Compass features are supported, but (hopefully) the most common ones are.
+
+What's supported when Compass compatibility mode is enabled:
+
+- Defining macros using the Compass syntax.
+- Local labels inside macros using the "label@sym" syntax.
+- "" and '' constants, being equal to 0.
+- Spaces in numeric constants: LD A,% 11 00 11 00.
+- COND and ENDC as synonims for IF and ENDIF, respectively.
+
+Also when in this mode, multiple POP statements work like in Compass: POP AF,BC,DE is equivalent to POP AF : POP BC : POP DE. This is the reverse of the default Sjasm behavior.
+
+What's NOT supported:
+
+- All the infrastructure for generating relocatable files, including the related directives: CSEG, DSEG, ASEG, PUBLIC, EXTRN, .PHASE, .DEPHASE
+- Creating local labels in macros with DEFL.
+- The TSRHOOKS, .LABEL, .UPPER, BREAKP, INCLUDE <number> directives.
+- Shortened mnemonics (such as LD B as equivalent to LD A,B).
+- Optional parameters in macros:
+
+test: macro @a,@b
+  if @a > ""
+  ...
+  endm
+
+  test 1	;Will not assemble
+  
+Other things to take in account regarding Compass style macros:
+
+- These macros are textually converted to Sjasm style macros before processing.
+- In the parameter names for these macros, the initial "@" is changed to "_" before processing.
+- When expanding macros Compass generates sequential labels ("label0000", "label0001"...) for all the local labels. Sjasm does not generate these labels.
+- Local labels inside macros ("label@sym") are converted to Sjasm-style local labels before processing as follows: ".labelSym".
+- A textual substitution of "@" into "_" is performed in the whole body of the macro before processing. Characters inside string literals are preserved.
+
+For reference, here's the syntax of Compass-style macros:
+
+name: macro @param1,@param2
+      ld hl,@param1
+	  ld b,@param2
+loop@sym:
+      djnz loop@sym
+	  endm
 
 
 =====
