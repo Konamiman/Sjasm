@@ -63,14 +63,25 @@ adrlst *maplstp=0;
 stringlst *modlstp=0,*dirlstp=0;
 #ifdef SECTIONS
 pooldatacls pooldata;
-pooltabcls pooltab;
+pooltabcls pooltab;bluemsx
 #endif
 
-void ReplaceCharInString(char* string, char from, char to) {
+void ReplaceAtToUnderscore(char* string) {
 	char* tempLp = string;
-	while (*tempLp) {
-		if (*tempLp == from)
-			*tempLp = to;
+	char c;
+	int insideDoubleQuotedString = 0;
+	int insideSingleQuotedString = 0;
+
+	while (c = *tempLp) {
+		if(c == '"' && !insideSingleQuotedString) {
+			insideDoubleQuotedString = !insideDoubleQuotedString;
+		}
+		if (c == '\'' && !insideDoubleQuotedString) {
+			insideSingleQuotedString = !insideSingleQuotedString;
+		}
+		if (c == '@' && !insideDoubleQuotedString && !insideSingleQuotedString)
+			*tempLp = '_';
+
 		tempLp++;
 	}
 }

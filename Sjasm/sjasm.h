@@ -75,7 +75,7 @@ extern void (*piCPUp)(void);
 extern char destfilename[],listfilename[],sourcefilename[],expfilename[],symfilename[];
 extern char *modlabp,*vorlabp,*macrolabp;
 
-void ReplaceCharInString(char* string, char from, char to);
+void ReplaceAtToUnderscore(char* string);
 
 void ErrorAndExit2(char* message, char* param, int exitCode);
 #define ErrorAndExit(message, exitCode) ErrorAndExit2(message, "", exitCode)

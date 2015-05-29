@@ -415,7 +415,7 @@ void ParseLine() {
 	ReformatCompassStyleMacro(line);
 
   if(insideCompassStyleMacroDefinition)
-	  ReplaceCharInString(line, '@', '_');
+	  ReplaceAtToUnderscore(line);
   
   ++gcurlin;
   replacedefineteller=comnxtlin=0;

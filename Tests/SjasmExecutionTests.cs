@@ -223,6 +223,24 @@ data@sym: db 0
         }
 
         [Test]
+        public void Ats_inside_string_literals_are_preserved_inside_Compass_style_macros()
+        {
+            var program1Source =
+@"test: macro
+ ld a,""@""
+ ld a,'@'
+ endm
+
+ test";
+
+            var program2Source =
+@" ld a,""@""
+ ld a,'@'";
+
+            AssertProduceSameCode(program1Source, program2Source, "-c");
+        }
+
+        [Test]
         public void Accepts_empty_string_as_zero_if_c_option_specified()
         {
             var program1Source = " ld a,\"\"\r\n ld b,''";

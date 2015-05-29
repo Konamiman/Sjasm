@@ -533,7 +533,7 @@ int ReadFileToStringLst(stringlst *&f,char *end) {
 
 	if (insideCompassStyleMacroDefinition) {
 		ConvertCompassStyleLocalLabels(line);
-		ReplaceCharInString(line, '@', '_');
+		ReplaceAtToUnderscore(line);
 	}
 
     if (*p && *p<=' ') {
