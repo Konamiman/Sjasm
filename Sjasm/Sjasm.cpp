@@ -2,7 +2,8 @@
 
   SjASM Z80 Assembler
 
-  Copyright (c) 2006 Sjoerd Mastijn
+  Copyright (c) 2015 Konamiman
+  Based on Sjasm 0.39g6 - Copyright (c) 2006 Sjoerd Mastijn
 
   This software is provided 'as-is', without any express or implied warranty.
   In no event will the authors be held liable for any damages arising from the
@@ -140,7 +141,7 @@ int main(int argc, char *argv[]) {
   sourcefilename[0]=destfilename[0]=listfilename[0]=expfilename[0]=0;
   if (argc==1) {
     cout << "Copyright 2006 Sjoerd Mastijn - www.xl2s.tk" << endl;
-	cout << "v0.39h by Konamiman - www.konamiman.com" << endl;
+	cout << "Copyright 2015 Konamiman - www.konamiman.com" << endl;
     cout << "\nUsage:\nsjasm [-options] sourcefile [targetfile [listfile [exportfile]]]\n";
     cout << "\nOption flags as follows:\n";
     cout << "  -l        Label table in listing\n";
