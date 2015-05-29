@@ -420,7 +420,7 @@ void dirTEXTAREA() {
   adres=oadres+adres-val;
 }
 
-void dirIF() {
+void dirIFCOND(char* errorMessage) {
   aint val;
   labelnotfound=0;
   if (!ParseExpression(lp,val)) { error("Syntax error",0,CATCHALL); return; }
@@ -428,24 +428,36 @@ void dirIF() {
   if (val) {
     ListFile();
     switch (ReadFile()) {
-    case ELSE: if (SkipFile()!=ENDIF) error("No endif",0); break;
+    case ELSE: if (SkipFile()!=ENDIF) error(errorMessage,0); break;
     case ENDIF: break;
-    default: error("No endif!",0); break;
+    default: error(errorMessage,0); break;
     }
   } 
   else {
     ListFile();
     switch (SkipFile()) {
-    case ELSE: if (ReadFile()!=ENDIF) error("No endif",0); break;
+    case ELSE: if (ReadFile()!=ENDIF) error(errorMessage,0); break;
     case ENDIF: break;
-    default: error("No endif!",0); break;
+    default: error(errorMessage,0); break;
     }
   }
   *lp=0;
 }
 
+void dirCOND() {
+	dirIFCOND("No endc");
+}
+
+void dirIF() {
+	dirIFCOND("No endif");
+}
+
 void dirELSE() {
   error("Else without if",0);
+}
+
+void dirENDC() {
+	error("Endc without cond", 0);
 }
 
 void dirENDIF() {
@@ -721,5 +733,10 @@ void InsertDirectives() {
   dirtab.insertd("text",dirTEXT);
   dirtab.insertd("pool",dirPOOL);
 #endif
+
+  if (compassCompatibilityEnabled) {
+	  dirtab.insertd("cond", dirCOND);
+	  dirtab.insertd("endc", dirENDC);
+  }
 }
 //eof direct.cpp

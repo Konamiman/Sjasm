@@ -268,5 +268,36 @@ data@sym: db 0
         {
             AssertDoesNotCompile(" ld a,%11 00 11 00");
         }
+
+        [Test]
+        public void Can_use_cond_endc_if_c_option_specified()
+        {
+            var program1Source =
+ @" cond 1
+ nop
+ endc
+
+ cond 1
+ nop
+ endif
+
+ if 1
+ nop
+ endc
+
+ if 1
+ nop
+ endif";
+            var program2Source = " ds 4,0";
+
+            AssertProduceSameCode(program1Source, program2Source, "-c");
+        }
+
+        [Test]
+        public void Cannot_use_cond_endc_if_c_option_not_specified()
+        {
+            AssertDoesNotCompile(" cond\r\n endif");
+            AssertDoesNotCompile(" if\r\n endc");
+        }
     }
 }

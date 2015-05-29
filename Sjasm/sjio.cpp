@@ -442,6 +442,7 @@ Ending ReadFile() {
     if (cmphstr(p,"else")) { ListFile(); return ELSE; }
     if (cmphstr(p,"endt")) { return ENDTEXTAREA; }
     if (cmphstr(p,"dephase")) { return ENDTEXTAREA; }
+	if (compassCompatibilityEnabled && cmphstr(p, "endc")) { return ENDIF; }
     ParseLine();
   }
 }
