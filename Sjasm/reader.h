@@ -41,7 +41,7 @@ char nextchar(istring const&, string const&);
 int sbcneed(string&,char);
 int cneed(string&,char);
 int needa(string&,string,int,string="",int=0,string="",int=0);
-int need(string&,char*);
+int need(string&,const char*);
 int needequ(string&);
 int needfield(string&);
 int needset(string&);
@@ -67,7 +67,7 @@ void getpage(string&,IntList&);
 
 class Find {
 public:
-  Find(char*s) { for (int i=0;i!=256;++i) _c[i]=false; while (*s) _c[*s++]=true; }
+  Find(const char*s) { for (int i=0;i!=256;++i) _c[i]=false; while (*s) _c[*s++]=true; }
   int find(string&s) { for (int i=0;i!=(int)s.size();++i) if (_c[s[i]]) return i; return (int)string::npos; }
   int findnot(string&s) { for (int i=0;i!=(int)s.size();++i) if (!_c[s[i]]) return i; return (int)string::npos; }
 private:

@@ -144,7 +144,7 @@ private:
 template <class T>
 class FunctionEntry {
 public:
-  char *_name;
+  const char *_name;
   T _funp;
 };
 
