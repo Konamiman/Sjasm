@@ -229,7 +229,7 @@ void RawSource::_Group2(string &line) {
 
 void RawSource::_CutLines(string &line) {
   string res="";
-  unsigned pos;
+  int pos;
   while ('o') {
     pos=(int)line.find_first_of("\\\"'");
     if (pos) res+=line.substr(0,pos);
