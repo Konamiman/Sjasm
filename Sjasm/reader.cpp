@@ -76,7 +76,7 @@ string tolower(string b) {
   return bp;
 }
 
-inline void skipblanks(string &p) {
+void skipblanks(string &p) {
   int pos=(int)p.find_first_not_of(' ');
   if (pos==string::npos) p.clear();
   else p=p.substr(pos);
@@ -156,7 +156,7 @@ int needa(string &p, string c1, int r1, string c2, int r2, string c3, int r3) {
   return 0;
 }
 
-int need(string &p, char *c) {
+int need(string &p, const char *c) {
   skipblanks(p);
   while (*c) {
     if (p[0]!=*c) { c+=2; continue; }

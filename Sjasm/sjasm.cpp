@@ -86,7 +86,8 @@ void endpass() {
 }
 
 void getoptions(char **&argv,int &i) {
-  char *p,c;
+  const char *p;
+  char c;
   while (argv[i] && *argv[i]=='-') {
     p=argv[i++]+1; 
     do {

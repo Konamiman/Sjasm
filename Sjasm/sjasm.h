@@ -60,6 +60,9 @@
 #define NEWLINE "\n"
 #endif
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <list>
 #include <stack>
