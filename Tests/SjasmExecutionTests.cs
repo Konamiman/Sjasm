@@ -317,5 +317,51 @@ data@sym: db 0
             AssertDoesNotCompile(" cond\r\n endif");
             AssertDoesNotCompile(" if\r\n endc");
         }
+
+        [Test]
+        public void Can_declare_backslash_as_single_char_in_compass_compat_mode()
+        {
+            AssertProduceSameCode(" ld a,\"\\\" ;comment", " ld a,92", "-c");
+            AssertProduceSameCode(" ld a,'\\' ;comment", " ld a,92", "-c");
+        }
+
+        [Test]
+        public void Can_declare_escaped_char_when_not_in_compass_compat_mode()
+        {
+            AssertProduceSameCode(" ld a,\"\\t\" ;comment", " ld a,9");
+            AssertProduceSameCode(" ld a,'\\t' ;comment", " ld a,9");
+        }
+
+        [Test]
+        public void Can_use_backslash_as_normal_char_inside_string_in_compass_compat_mode()
+        {
+            AssertProduceSameCode(" db \"AB\\\" ;comment", " db 65,66,92", "-c");
+            AssertProduceSameCode(" db \"AB\\C\" ;comment", " db 65,66,92,67", "-c");
+        }
+
+        [Test]
+        public void Can_use_escaped_char_in_string_when_not_in_compass_compat_mode()
+        {
+            AssertProduceSameCode(" db \"AB\\t\" ;comment", " db 65,66,9");
+            AssertProduceSameCode(" db \"AB\\tC\" ;comment", " db 65,66,9,67");
+        }
+
+        [Test]
+        public void Compass_directives_are_ignored_in_compass_compat_mode()
+        {
+            AssertProduceSameCode(" .label 34\r\n db 0", " db 0", "-c");
+            AssertProduceSameCode(" tsrhooks\r\n db 0", " db 0", "-c");
+            AssertProduceSameCode(" .upper on\r\n db 0", " db 0", "-c");
+            AssertProduceSameCode(" breakp\r\n db 0", " db 0", "-c");
+        }
+
+        [Test]
+        public void Compass_directives_produces_error_when_not_in_compass_compat_mode()
+        {
+            AssertDoesNotCompile(" .label 34\r\n db 0");
+            AssertDoesNotCompile(" tsrhooks\r\n db 0");
+            AssertDoesNotCompile(" .upper on\r\n db 0");
+            AssertDoesNotCompile(" breakp\r\n db 0");
+        }
     }
 }

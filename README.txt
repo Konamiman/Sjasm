@@ -111,6 +111,15 @@ New in 0.39h (by Konamiman):
 - Added different exit codes for different error conditions. See "Exit codes".
 - &H and &B can be used as prefixes for hexadecimal and binary constants respectively.
 
+New in 0.39i (by Konamiman):
+----------------------------
+- Fix: program crashes without any error message when declaring a Compass-style macro
+  in which the macro name doesn't end with ":".
+- The backslash character, "\", is no longer interpreted as an escape character when running in Compass
+  compatibility mode. So things like 'ld a,"\"' or 'db "\"' work as expected.
+- The TSRHOOKS, .LABEL, .UPPER, and BREAKP directives are now just ignored (instead of throwing errors)
+  when running in Compass compatibility mode.
+
 Known bugs:
 -----------
 - The listfile doesn't always look that good.
@@ -305,7 +314,10 @@ Examples:
   LD A,'"'
   LD A,"'"
 
-In Compass compatibility mode the special constants "" and '' are recognized as being equal to zero.
+When running in Compass compatibility mode:
+- The special constants "" and '' are recognized as being equal to zero.
+- There are no escape sequences, thus the backslash character, "\", is treated as any other character
+  (so e.g. the following works: ld a,"\").
 
 
 Expressions
@@ -1168,8 +1180,11 @@ What's supported when Compass compatibility mode is enabled:
 - Defining macros using the Compass syntax.
 - Local labels inside macros using the "label@sym" syntax.
 - "" and '' constants, being equal to 0.
+- The backslash character, "\", is just a normal character
+  (so no escape sequences are available in strings or in character definitions).
 - Spaces in numeric constants: LD A,% 11 00 11 00.
 - COND and ENDC as synonims for IF and ENDIF, respectively.
+- The TSRHOOKS, .LABEL, .UPPER, and BREAKP directives will just be ignored (instead of throwing an error).
 
 Also when in this mode, multiple POP statements work like in Compass: POP AF,BC,DE is equivalent to POP AF : POP BC : POP DE. This is the reverse of the default Sjasm behavior.
 
@@ -1177,7 +1192,7 @@ What's NOT supported:
 
 - All the infrastructure for generating relocatable files, including the related directives: CSEG, DSEG, ASEG, PUBLIC, EXTRN, .PHASE, .DEPHASE
 - Creating local labels in macros with DEFL.
-- The TSRHOOKS, .LABEL, .UPPER, BREAKP, INCLUDE <number> directives.
+- The INCLUDE <number> directive.
 - Shortened mnemonics (such as LD B as equivalent to LD A,B).
 - Optional parameters in macros:
 

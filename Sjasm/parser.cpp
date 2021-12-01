@@ -241,14 +241,14 @@ char *ReplaceDefine(char*lp) {
     if (*lp=='/' && *(lp+1)=='/' && !comlin && !comnxtlin) { *rp=0; return nl; }
     if (*lp=='/' && *(lp+1)=='*') { lp+=2; ++comnxtlin; continue; }
 
-    if (*lp=='"' || *lp=='\'') {
+    if (*lp=='"' || ((!compassCompatibilityEnabled) && *lp == '\'')) {
       a=*lp; if (!comlin && !comnxtlin) { *rp=*lp; ++rp; } ++lp;
       if (a!='\'' || (*(lp-2)!='f' || *(lp-3)!='a') && (*(lp-2)!='F' && *(lp-3)!='A'))
         while ('o') {
           if (!*lp) { *rp=0; return nl; }
           if (!comlin && !comnxtlin) *rp=*lp;
           if (*lp==a) { if (!comlin && !comnxtlin) ++rp; ++lp; break; }
-          if (*lp=='\\') { ++lp; if (!comlin && !comnxtlin) { ++rp; *rp=*lp; } }
+          if (*lp=='\\' && !compassCompatibilityEnabled) { ++lp; if (!comlin && !comnxtlin) { ++rp; *rp=*lp; } }
           if (!comlin && !comnxtlin) ++rp; ++lp;
         }
       continue;
@@ -370,15 +370,14 @@ void ReformatCompassStyleMacro(char* line)
 		return;
 
 	labelStart = line;
-	while(*lp && *lp > ' ' && *lp != ':') lp++;
+	while(*lp && *lp > ' ' && *lp != ':' && *lp != ';') lp++;
 	if (!*lp || *lp == ';')
 		return;
 
 	labelEnd = lp;
 	labelLength = labelEnd - labelStart;
 
-	while (*lp == ':') lp++;
-	while (*lp && *lp <= ' ') ++lp;
+	while (*lp == ':' || *lp == ' ' || *lp == '\t') lp++;
 	if (!*lp)
 		return;
 
@@ -387,7 +386,7 @@ void ReformatCompassStyleMacro(char* line)
 	if (tolower(lp[2]) != 'c') return;
 	if (tolower(lp[3]) != 'r') return;
 	if (tolower(lp[4]) != 'o') return;
-	if (lp[5] > ' ') return;;
+	if (lp[5] > ' ') return;
 
 	lp += 5;
 	while (*lp && *lp <= ' ') ++lp;
@@ -397,15 +396,13 @@ void ReformatCompassStyleMacro(char* line)
 
 	/* It's a Compass style macro */
 
-	memcpy(temp, labelStart, labelLength);
-	temp[labelLength] = '\0';
+    strcpy(temp, " macro ");
+    memcpy(temp + 7, labelStart, labelLength);
+    strcpy(temp + 7 + labelLength, paramsStart - 1);
 
-	strcpy(line, " macro ");
-	strcpy(line + 7, temp);
-	line[7 + labelLength] = ' ';
-	strcpy(line + 7 + labelLength + 1, paramsStart);
+    strcpy(line, temp);
 
-	insideCompassStyleMacroDefinition = 1;
+    insideCompassStyleMacroDefinition = 1;
 }
 
 void ParseLine() {

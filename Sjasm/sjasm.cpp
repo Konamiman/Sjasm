@@ -148,11 +148,11 @@ int main(int argc, char *argv[]) {
   char *p;
   int i=1;
 
-  cout << "SjASM Z80 Assembler v0.39h" << endl;
+  cout << "SjASM Z80 Assembler v0.39i" << endl;
   sourcefilename[0]=destfilename[0]=listfilename[0]=expfilename[0]=0;
   if (argc==1) {
     cout << "Copyright 2006 Sjoerd Mastijn - www.xl2s.tk" << endl;
-	cout << "Copyright 2015 Konamiman - www.konamiman.com" << endl;
+	cout << "Copyright 2021 Konamiman - www.konamiman.com" << endl;
     cout << "\nUsage:\nsjasm [-options] sourcefile [targetfile [listfile [exportfile]]]\n";
     cout << "\nOption flags as follows:\n";
     cout << "  -l        Label table in listing\n";
