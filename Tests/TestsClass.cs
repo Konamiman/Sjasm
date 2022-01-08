@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace Konamiman.Sjasm.Tests
@@ -9,7 +10,10 @@ namespace Konamiman.Sjasm.Tests
     {
         protected ExecutionResult ExecuteSjasm(string arguments)
         {
-            var startInfo = new ProcessStartInfo(@"..\..\bin\sjasm.exe", arguments) {
+            var myPath = new Uri(Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase)).LocalPath;
+            var sjasmPath = Path.Combine(myPath, "../../bin/Sjasm.exe");
+
+            var startInfo = new ProcessStartInfo(sjasmPath, arguments) {
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,

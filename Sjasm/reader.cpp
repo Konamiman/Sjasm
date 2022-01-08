@@ -321,6 +321,11 @@ int getCharConst(char *&p, aint &val) {
 	  p += 2;
 	  return 1;
   }
+  if (compassCompatibilityEnabled && (p[0] == '"' || p[0] == '\'') && p[1] == '\\' && (p[2] == p[0])) {
+      val = '\\';
+      p += 3;
+      return 1;
+  }
   q=*p++;
   do {
     if (!*p || *p==q) { p=op; return 0; }
@@ -345,7 +350,13 @@ int getBytes(char *&p, int e[], int add, int dc) {
       do {
         if (!*p || *p=='"') { error("Syntax error",p,SUPPRES); e[t]=-1; return t; }
         if (t==128) { error("Too many arguments",p,SUPPRES); e[t]=-1; return t; }
-        getCharConstChar(p,val); check8(val); e[t++]=(val+add)&255;
+        if (compassCompatibilityEnabled && *p == '\\') {
+            e[t++] = (92 + add) & 255;
+            p++;
+        }
+        else {
+            getCharConstChar(p, val); check8(val); e[t++] = (val + add) & 255;
+        }
       } while (*p!='"');
       ++p; if (dc && t) e[t-1]|=128;
     } else {

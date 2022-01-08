@@ -468,6 +468,10 @@ void dirENDTEXTAREA() {
   error("Endt without textarea",0);
 }
 
+void dirNOOP() {
+  while (*lp) lp++;
+}
+
 void dirINCLUDE() {
   char *fnaam;
 #ifdef SECTIONS
@@ -737,6 +741,10 @@ void InsertDirectives() {
   if (compassCompatibilityEnabled) {
 	  dirtab.insertd("cond", dirCOND);
 	  dirtab.insertd("endc", dirENDC);
+      dirtab.insertd(".label", dirNOOP);
+      dirtab.insertd(".upper", dirNOOP);
+      dirtab.insertd("tsrhooks", dirNOOP);
+      dirtab.insertd("breakp", dirNOOP);
   }
 }
 //eof direct.cpp
