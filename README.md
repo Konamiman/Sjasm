@@ -1,6 +1,6 @@
 # Sjasm #
 
-Sjasm is a Z80 assembler originally developed by Sjoerd Mastijn. It is available to download, sources included, at [XL2S Entertainment site](http://home.online.nl/~smastijn/home.html).
+Sjasm is a Z80 assembler originally developed by Sjoerd Mastijn. It is available to download, sources included, at [XL2S Entertainment site](http://xl2s.tk/).
 
 This repository has been created from the original sources as a means to have them properly organized and easily browseable (and some cool features have been added to v0.39 along the way). It contains a Visual Studio solution holding a Visual C++ project with the sources themselves, and a C# project containing unit tests.
 
