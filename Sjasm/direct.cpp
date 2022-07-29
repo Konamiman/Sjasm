@@ -314,8 +314,14 @@ void dirMODULE() {
 #ifdef SECTIONS
   if (section!=TEXT) { error(".module only allowed in text sections",0); *lp=0; return; }
 #endif
-  modlstp=new stringlst(modlabp,modlstp);
   char *n;
+  stringlst* old_modlstp;
+
+  old_modlstp = modlstp;
+  modlstp=new stringlst();
+  modlstp->string=modlabp;
+  modlstp->next=old_modlstp;
+
   skipblanks(lp); if (!*lp) { modlabp=0; return; }
   if (n=getid(lp)) modlabp=n; else error("Syntax error",0,CATCHALL);
 }
