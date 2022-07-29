@@ -363,5 +363,49 @@ data@sym: db 0
             AssertDoesNotCompile(" .upper on\r\n db 0");
             AssertDoesNotCompile(" breakp\r\n db 0");
         }
+
+        [Test]
+        public void Modules_work()
+        {
+            var program1Source =
+@"
+    org 100h;
+
+    jp label1
+    jp label2
+    jp label3
+    jp label4
+    jp label5
+
+label1: nop
+label2: nop
+label3: nop
+label4: nop
+label5: nop
+";
+
+            var program2Source =
+@"
+    org 100h;
+
+    jp label1
+    jp X.label2
+    jp Y.label3
+    jp X.label4
+    jp label5
+
+label1: nop
+    MODULE X
+label2: nop
+    MODULE Y
+label3: nop
+    ENDMODULE
+label4: nop
+    ENDMODULE
+label5: nop
+";
+
+            AssertProduceSameCode(program1Source, program2Source);
+        }
     }
 }

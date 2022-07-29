@@ -44,7 +44,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sjasm.cpp">
+    <ClCompile Include="sjasm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="direct.cpp">

@@ -97,7 +97,7 @@
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="piz80.cpp" />
     <ClCompile Include="reader.cpp" />
-    <ClCompile Include="Sjasm.cpp" />
+    <ClCompile Include="sjasm.cpp" />
     <ClCompile Include="sjio.cpp" />
     <ClCompile Include="tables.cpp" />
   </ItemGroup>

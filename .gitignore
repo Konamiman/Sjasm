@@ -2,3 +2,12 @@
 .deps/
 Sjasm/sjasm
 *.vcxproj.user
+Debug/
+bin/
+.vs/
+packages/
+*.asm
+*.lst
+*.sym
+*.out
+sjasm_linux
