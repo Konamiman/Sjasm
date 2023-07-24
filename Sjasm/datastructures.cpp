@@ -50,8 +50,8 @@ void Data::_grow(int nsize) {
 }
 
 void Data::_resize(int nsize) {
-  byte *odata=_data;
-  _data=new byte[nsize];
+  BYTE *odata=_data;
+  _data=new BYTE[nsize];
   memset(_data+_size,0,nsize-_size);
   if (odata) {
     memcpy(_data,odata,_size);
@@ -654,19 +654,19 @@ void Structure::emitdata(string line, Data &e, string label) {
       case 0: break;
       case 1:
         if (!ParseExpression(d,val)) error("Syntax error"); checkjunk(d);
-        val=check8(val); e.push((byte)val);
+        val=check8(val); e.push((BYTE)val);
         break;
       case 2:
         if (!ParseExpression(d,val)) error("Syntax error"); checkjunk(d);
-        val=check16(val); e.push((byte)val); e.push((byte)(val>>8));
+        val=check16(val); e.push((BYTE)val); e.push((BYTE)(val>>8));
         break;
       case 3:
         if (!ParseExpression(d,val)) error("Syntax error"); checkjunk(d);
-        val=check24(val); for (int i=0;i!=3;++i) { e.push((byte)val); val>>=8; }
+        val=check24(val); for (int i=0;i!=3;++i) { e.push((BYTE)val); val>>=8; }
         break;
       case 4:
         if (!ParseExpression(d,val)) error("Syntax error"); checkjunk(d);
-        /*val=check32(val);*/ for (int i=0;i!=4;++i) { e.push((byte)val); val>>=8; }
+        /*val=check32(val);*/ for (int i=0;i!=4;++i) { e.push((BYTE)val); val>>=8; }
         break;
       case 5:
         f.clear();

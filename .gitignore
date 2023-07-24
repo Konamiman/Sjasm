@@ -1,0 +1,3 @@
+*.o
+Sjasm/sjasm
+Sjasm/.deps

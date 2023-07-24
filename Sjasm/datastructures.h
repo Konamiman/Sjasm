@@ -33,7 +33,7 @@ typedef IntList::iterator iIntList;
 typedef vector<string> StringList;
 typedef StringList::iterator iStringList;
 typedef string::iterator istring;
-typedef unsigned char byte;
+typedef unsigned char BYTE;
 
 class RawSource;
 typedef void(*pFun)(string&,RawSource*);
@@ -47,23 +47,23 @@ class Data {
 public:
   Data() : _data(0), _size(0), _maxsize(4)  { _resize(_maxsize); }
   Data(int n_maxsize) : _data(0), _size(0), _maxsize(n_maxsize) { _resize(_maxsize); }
-  Data(byte *n_data,int n_size) : _data(0), _size(n_size), _maxsize(n_size) { _resize(n_size); memcpy(_data,n_data,n_size); }
+  Data(BYTE *n_data,int n_size) : _data(0), _size(n_size), _maxsize(n_size) { _resize(n_size); memcpy(_data,n_data,n_size); }
   ~Data() { delete [] _data; }
-  void setdata(byte *buffer, int size) { _data=new byte[size]; memcpy(_data,buffer,size); _size=_maxsize=size; }
-  void push(byte n_byte) { if (_size>=_maxsize) _grow(_size); _data[_size]=n_byte; ++_size; }
+  void setdata(BYTE *buffer, int size) { _data=new BYTE[size]; memcpy(_data,buffer,size); _size=_maxsize=size; }
+  void push(BYTE n_byte) { if (_size>=_maxsize) _grow(_size); _data[_size]=n_byte; ++_size; }
   void push(const Data &n_data) { 
     if (_size+n_data._size>=_maxsize) _grow(_size+n_data._size);
     memcpy(_data+_size,n_data._data,n_data._size);
     _size+=n_data._size;
   }
-  byte operator[](int index) const { return _data[index]; }
-  byte &operator[](int index) { if (index>=_maxsize) _grow(index); if (_size<=index) _size=index+1; return _data[index]; }
+  BYTE operator[](int index) const { return _data[index]; }
+  BYTE &operator[](int index) { if (index>=_maxsize) _grow(index); if (_size<=index) _size=index+1; return _data[index]; }
   int size() { return _size; }
   void clear() { _size=0; }
-  byte *getdatap(int offset=0) { return _data+offset; }
+  BYTE *getdatap(int offset=0) { return _data+offset; }
   bool empty() { return _size==0; }
 private:
-  byte *_data;
+  BYTE *_data;
   int _size,_maxsize;
   void _grow(int);
   void _resize(int);

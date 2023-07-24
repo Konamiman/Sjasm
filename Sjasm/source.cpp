@@ -468,7 +468,7 @@ dIncbin::dIncbin(std::string n_line, bool list) : _line(n_line),_listinfo(0) {
   string n;
   ReadFile file(getpath(n=getfilename(_line)));
   if (file.ok()) {
-    byte *buffer; int size;
+    BYTE *buffer; int size;
     file.getbuffer(buffer,size);
     _data.setdata(buffer,size);
   }

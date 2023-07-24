@@ -141,7 +141,7 @@ public:
   int pageok(int np) { if (_page.empty() || (unsigned)np>=_page.size()) return 0; return _page[np]!=0; }
   void emit(Data &e) { if (!e.size()) return; if (!_outp) getroutp(); _outp->emit(e); adres+=e.size(); }
   int pool(int d) { if (!_outp) getroutp(); return _outp->pool(d); }
-  void emitblock(int d, int len) { Data e; while (len--) e.push((byte)d); emit(e); }
+  void emitblock(int d, int len) { Data e; while (len--) e.push((BYTE)d); emit(e); }
   void reset();
   void dump(StringList&);
   void sort();

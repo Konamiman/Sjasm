@@ -28,8 +28,8 @@
 
 #include "sjasm.h"
 
-byte map[256];
-byte smap[256];
+BYTE map[256];
+BYTE smap[256];
 
 void getbytes(string &line, Data &e, bool madd, bool usemap, bool canval, bool dc, bool dz) {
   int val,add=0,len=0,glabelnotfound=0;
@@ -100,7 +100,7 @@ void piDD(string line,Data &e) {
   int val;
   do {
     if (ParseExpression(line,val)) {
-      for (int i=0;i!=4;++i) { e.push((byte)val); val>>=8; }
+      for (int i=0;i!=4;++i) { e.push((BYTE)val); val>>=8; }
     } else { error("Syntax error"); return; }
   } while (comma(line));
   checkjunk(line);
@@ -110,7 +110,7 @@ void piDT(string line,Data &e) {
   int val;
   do {
     if (ParseExpression(line,val)) {
-      check24(val); for (int i=0;i!=3;++i) { e.push((byte)val); val>>=8; }
+      check24(val); for (int i=0;i!=3;++i) { e.push((BYTE)val); val>>=8; }
     } else { error("Syntax error"); return; }
   } while (comma(line));
   checkjunk(line);
@@ -120,7 +120,7 @@ void piDW(string line,Data &e) {
   int val;
   do {
     if (ParseExpression(line,val)) {
-      check16(val); e.push((byte)val); e.push((byte)(val>>8));
+      check16(val); e.push((BYTE)val); e.push((BYTE)(val>>8));
     } else { error("Syntax error"); return; }
   } while (comma(line));
   checkjunk(line);
@@ -170,7 +170,7 @@ void piASCMAP(string line, Data &) {
     if (comma(line)) {
       if (!ParseExpression(line,a)) { error("Increment expected"); return; }
     } else a=1;
-    for (int i=first; i!=last; ++i) { check8(b); map[i]=(byte)b; b+=a; }
+    for (int i=first; i!=last; ++i) { check8(b); map[i]=(BYTE)b; b+=a; }
   } else {
     int oadres=adres;
     for (int i=first; i!=last; ++i) {
@@ -178,7 +178,7 @@ void piASCMAP(string line, Data &) {
       int e;
       adres=i; // terrible hack :)
       if (!ParseExpression(l,e)) break;
-      check8(e);  map[i]=(byte)e;
+      check8(e);  map[i]=(BYTE)e;
     }
     adres=oadres;
   }
@@ -186,7 +186,7 @@ void piASCMAP(string line, Data &) {
 }
 
 void piASCMAPRESET(string line, Data &) {
-  for (int i=0; i!=256; ++i) map[i]=(byte)i;
+  for (int i=0; i!=256; ++i) map[i]=(BYTE)i;
   again=1; checkjunk(line);
 }
 
@@ -310,7 +310,7 @@ void initPidata() {
     "defm",pdDB
   };
   datafuntab.init(funs, sizeof funs/sizeof funs[0]);
-  for (int i=0; i!=256; ++i) smap[i]=map[i]=(byte)i;
+  for (int i=0; i!=256; ++i) smap[i]=map[i]=(BYTE)i;
 }
 
 //eof
