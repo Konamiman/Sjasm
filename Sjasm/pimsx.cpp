@@ -968,7 +968,7 @@ void pmLD(string line,Data &e) {
     case Z80_BC: case Z80_DE: case Z80_SP: e.push(0xed); e.push(0x33+y.reg); break;
     }
     if (!e.size()) break;
-    check16(x.val); e.push((byte)x.val); e.push((byte)(x.val>>8));
+    check16(x.val); e.push((BYTE)x.val); e.push((BYTE)(x.val>>8));
     break;
   case Z80_A:
     switch (y.reg) {
@@ -976,7 +976,7 @@ void pmLD(string line,Data &e) {
       preinc(e,y); e.push(0x0a); postinc(e,y); break;
     case Z80mDE: case Z80miDE: case Z80mdDE: case Z80mDEi: case Z80mDEd: 
       preinc(e,y); e.push(0x1a); postinc(e,y); break;
-    case Z80mnn: e.push(0x3a); check16(y.val); e.push((byte)y.val); e.push((byte)(y.val>>8)); break;
+    case Z80mnn: e.push(0x3a); check16(y.val); e.push((BYTE)y.val); e.push((BYTE)(y.val>>8)); break;
     case Z80_I: e[0]=0xed; e[1]=0x57; break;
     case Z80_R: e[0]=0xed; e[1]=0x5f; break;
     }
@@ -1011,7 +1011,7 @@ void pmLD(string line,Data &e) {
     case Z80_nn: e.push(x.reg-15); break;
     }
     if (!e.size()) break;
-    check16(y.val); e.push((byte)y.val); e.push((byte)(y.val>>8));
+    check16(y.val); e.push((BYTE)y.val); e.push((BYTE)(y.val>>8));
     break;
   case Z80_I:
     if (y.reg!=Z80_A) break;
@@ -1023,7 +1023,7 @@ void pmLD(string line,Data &e) {
     case Z80_nn: e.push(x.reg); e.push(0x21); break;
     }
     if (!e.size()) break;
-    check16(y.val); e.push((byte)y.val); e.push((byte)(y.val>>8));
+    check16(y.val); e.push((BYTE)y.val); e.push((BYTE)(y.val>>8));
     break;
   case Z80_IXH: case Z80_IXL: case Z80_IYH: case Z80_IYL:
     switch (y.reg) {

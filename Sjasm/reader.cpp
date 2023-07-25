@@ -277,7 +277,7 @@ void getstring(string &s,string &e) {
     do {
       int val;
       if (s.empty() || s[0]=='"') { error("Syntax error",ERRREP); break; }
-      getcharconstchar(s,val); e.push_back((byte)val);
+      getcharconstchar(s,val); e.push_back((BYTE)val);
     } while (s[0]!='"');
     s.erase(0,1);
   } else
